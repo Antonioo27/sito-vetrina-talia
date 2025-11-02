@@ -1,29 +1,246 @@
-# Create T3 App
+# 🛏️ Talia Materassi - Sito Vetrina
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Un moderno sito e-commerce per la vendita di materassi premium, costruito con le ultime tecnologie web.
 
-## What's next? How do I make an app with this?
+## ✨ Caratteristiche
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **🔐 Autenticazione Sicura**: Gestione utenti con NextAuth.js e JWT
+- **📦 Gestione Prodotti**: CRUD completo per amministratori
+- **💳 Admin Dashboard**: Interfaccia intuitiva per gestire il catalogo
+- **🎨 Design Moderno**: UI responsivo con Tailwind CSS
+- **⚡ Performance Ottimale**: Next.js con Turbopack
+- **🗄️ Database Robusto**: Prisma ORM con SQLite (facilmente migrabile)
+- **📱 Mobile-First**: Completamente responsive
+- **🔍 SEO Ottimizzato**: Meta tag, Open Graph, sitemap
+- **📄 Pagine Legali**: Privacy Policy, Terms, Cookie Policy
+- **🎯 Footer Completo**: Con social media, categororie e informazioni
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## 🚀 Stack Tecnologico
 
+- **Frontend**: Next.js 15, React, TypeScript
+- **Styling**: Tailwind CSS
+- **Backend**: Next.js API Routes, tRPC
+- **Database**: Prisma ORM + SQLite
+- **Auth**: NextAuth.js v5 (JWT Strategy)
+- **Validation**: Zod
+- **Deployment**: Vercel, Netlify, o Self-Hosted
+
+## 🛠️ Installazione
+
+### Prerequisiti
+- Node.js 18+
+- npm o yarn
+
+### Setup Locale
+
+1. **Clona il repository**:
+   ```bash
+   git clone https://github.com/tuoutente/sito-vetrina-talia.git
+   cd sito-vetrina-talia
+   ```
+
+2. **Installa le dipendenze**:
+   ```bash
+   npm install
+   ```
+
+3. **Crea il file .env**:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Genera un NEXTAUTH_SECRET**:
+   ```bash
+   npx auth secret
+   ```
+
+5. **Configura il database**:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+6. **Avvia il server di sviluppo**:
+   ```bash
+   npm run dev
+   ```
+
+7. **Accedi a http://localhost:3000**
+
+## 📚 Pagine Principali
+
+- `/` - Home page con hero banner e catalogo prodotti
+- `/login` - Pagina di login
+- `/register` - Registrazione utenti
+- `/admin` - Dashboard amministrativa
+- `/privacy` - Privacy Policy
+- `/terms` - Termini di Servizio
+- `/cookies` - Cookie Policy
+- `/sitemap` - Mappa del sito
+
+## 👤 Utente Test Admin
+
+Email: `admin@talia.it`
+Password: `Admin123!`
+
+(Personalizza questi dati prima del deployment in produzione)
+
+## 📁 Struttura del Progetto
+
+```
+src/
+├── app/
+│   ├── _components/          # Componenti riutilizzabili
+│   │   ├── navbar.tsx       # Navigazione
+│   │   ├── footer.tsx       # Footer
+│   │   ├── admin-dashboard.tsx
+│   │   ├── product-list.tsx
+│   │   └── session-provider.tsx
+│   ├── admin/               # Pagina admin
+│   ├── login/               # Pagina login
+│   ├── register/            # Pagina registrazione
+│   ├── privacy/             # Privacy policy
+│   ├── terms/               # Terms of service
+│   ├── cookies/             # Cookie policy
+│   ├── sitemap/             # Mappa sito
+│   └── page.tsx             # Home page
+├── server/
+│   ├── api/
+│   │   ├── routers/         # tRPC routers
+│   │   │   ├── product.ts
+│   │   │   ├── typology.ts
+│   │   │   └── auth.ts
+│   │   └── root.ts
+│   ├── auth/
+│   │   ├── config.ts        # Configurazione NextAuth
+│   │   └── password.ts      # Utility per password
+│   └── db.ts                # Prisma client
+└── styles/
+    └── globals.css          # Stili globali
+```
+
+## 🔐 Configurazione della Sicurezza
+
+1. **NEXTAUTH_SECRET**: Genera un nuovo valore per la produzione
+2. **Database**: Usa PostgreSQL per la produzione (non SQLite)
+3. **HTTPS**: Configura SSL/TLS
+4. **Headers Sicuri**: Implementa CSP e X-Frame-Options
+
+## 📦 Build per la Produzione
+
+```bash
+npm run build
+npm start
+```
+
+## 🚀 Deployment
+
+Vedi il file **[DEPLOYMENT.md](./DEPLOYMENT.md)** per istruzioni complete su come pubblicare il sito.
+
+### Opzioni supportate:
+- ✅ Vercel (consigliato)
+- ✅ Netlify
+- ✅ Self-Hosted (VPS, Docker)
+- ✅ AWS, Google Cloud, Azure
+
+## 📊 Features Dettagliate
+
+### Gestione Prodotti
+- ✅ Aggiungere, modificare, eliminare prodotti
+- ✅ Caricare immagini (Base64)
+- ✅ Gestire sconto percentuale
+- ✅ Assegnare tipologie (Memory Foam, Molle, ecc.)
+
+### Gestione Tipologie
+- ✅ Aggiungere/rimuovere categorie
+- ✅ Persistenza nel database
+- ✅ Validazione duplicati
+
+### Autenticazione
+- ✅ Login/Logout
+- ✅ Registrazione utenti
+- ✅ Protezione pagine admin
+- ✅ Hash password con scrypt
+
+### Frontend
+- ✅ Design moderno e responsivo
+- ✅ Animazioni smooth
+- ✅ Dark/Light ready
+- ✅ SEO ottimizzato
+
+## 🎨 Personalizzazione
+
+### Colori
+Modifica `tailwind.config.ts` per cambiare la palette colori
+
+### Testi
+Aggiorna i testi nel file `.env.example` e nelle componenti
+
+### Email di Contatto
+Aggiorna in:
+- `src/app/_components/footer.tsx`
+- `src/app/privacy/page.tsx`
+- `src/app/terms/page.tsx`
+
+## 📱 Responsive Design
+
+Il sito è ottimizzato per:
+- 📱 Mobile (320px+)
+- 📱 Tablet (768px+)
+- 💻 Desktop (1024px+)
+- 🖥️ Large screens (1280px+)
+
+## 🔍 SEO
+
+✅ Meta tag ottimizzati
+✅ Open Graph supportato
+✅ Twitter Card supportato
+✅ Robots.txt configurato
+✅ Sitemap disponibile
+✅ Schema.org markup ready
+
+## 🐛 Troubleshooting
+
+**Problema**: "Cannot find module"
+```bash
+rm -rf node_modules .next
+npm install
+npm run build
+```
+
+**Problema**: Errore database
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+**Problema**: Errori di autenticazione
+```bash
+npx auth secret
+# Copia il valore in .env
+```
+
+## 📞 Support
+
+Per problemi o domande:
+1. Controlla [DEPLOYMENT.md](./DEPLOYMENT.md)
+2. Leggi la documentazione ufficiale dei pacchetti
+3. Apri un issue nel repository
+
+## 📄 Licenza
+
+MIT License - vedi LICENSE file
+
+## 🙏 Ringraziamenti
+
+Costruito con:
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-## Learn More
+---
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+**Versione**: 1.0.0
+**Ultimo aggiornamento**: Novembre 2024
+**Status**: Ready for Production ✅

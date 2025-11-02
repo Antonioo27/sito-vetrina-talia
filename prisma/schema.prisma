@@ -56,13 +56,17 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
-    name          String?
+    firstName     String?
+    lastName      String?
     email         String?   @unique
+    password      String?
     emailVerified DateTime?
     image         String?
+    isAdmin       Boolean   @default(false)
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    wishlists     Wishlist[]
 }
 
 model VerificationToken {
@@ -71,4 +75,74 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Typology {
+    id          String    @id @default(cuid())
+    name        String    @unique
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+    id          String    @id @default(cuid())
+    name        String
+    description String?
+    price       Float?
+    discount    Float?    // Discount percentage (0-100)
+    imageUrl    String?   // Legacy - still supported but use ProductMedia instead
+    typology    String?   // Categories: Molle, Memory Foam, Hybrid, Latex, Orthopedic, etc.
+
+    // Product specifications
+    weight      Float?    // Weight in kg
+    height      Float?    // Height in cm
+    width       Float?    // Width in cm
+    length      Float?    // Length in cm
+
+    // Relations
+    media       ProductMedia[]
+    wishlists   Wishlist[]
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
+model ProductMedia {
+    id          String    @id @default(cuid())
+    productId   String
+    product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    // Media type: 'image' or 'video'
+    type        String    // 'image' or 'video'
+    url         String    // URL to the media file
+    alt         String?   // Alt text for images
+    order       Int       @default(0)  // Order for display in gallery
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@index([productId])
+}
+
+model Wishlist {
+    id          String    @id @default(cuid())
+    userId      String
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    productId   String
+    product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime  @default(now())
+
+    @@unique([userId, productId])
+    @@index([userId])
+}
+
+model Banner {
+    id          String    @id @default(cuid())
+    imageUrl    String    // URL to the banner image
+    altText     String?   // Alt text for the banner image
+    active      Boolean   @default(true)
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 }

@@ -1,68 +1,164 @@
-import Link from "next/link";
-
-import { LatestPost } from "~/app/_components/post";
+import { redirect } from "next/navigation";
+import { ProductList } from "~/app/_components/product-list";
 import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+  // Check if user is logged in and is admin
   const session = await auth();
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
+  console.log("[HOME] Session check:", {
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    email: session?.user?.email,
+  });
+
+  if (session?.user?.email) {
+    // User is logged in, check if admin
+    console.log("[HOME] User logged in, checking admin status for:", session.user.email);
+
+    const user = await db.user.findUnique({
+      where: { email: session.user.email },
+      select: { isAdmin: true },
+    });
+
+    console.log("[HOME] Database query result:", { email: session.user.email, isAdmin: user?.isAdmin });
+
+    if (user?.isAdmin) {
+      console.log("[HOME] Admin detected, redirecting to /admin");
+      redirect("/admin");
+    } else {
+      console.log("[HOME] User is not admin, showing home page");
+    }
+  } else {
+    console.log("[HOME] No session, showing home page for anonymous user");
   }
+
+  // Prefetch products
+  void api.product.getAll.prefetch();
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
+      <main className="flex flex-col bg-white overflow-hidden">
+        {/* Full Banner Section */}
+        <section className="relative w-full h-screen flex items-end justify-center overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 w-full h-full">
+            <img
+              src="/images/banner.jpg"
+              alt="Talia Materassi - Materassi Premium"
+              className="w-full h-full object-cover"
+            />
+            {/* Smart Overlay - Gradient + Blur for text area */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/20 to-transparent"></div>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
+          {/* Banner Text - Bottom Center */}
+          <div className="relative z-10 container mx-auto px-4 pb-16 text-center">
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">
+                Talia Materassi
+              </h1>
+              <p className="text-lg md:text-xl text-gray-100">
+                Scopri il comfort del lusso
               </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
             </div>
           </div>
 
-          {session?.user && <LatestPost />}
-        </div>
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </section>
+
+        {/* Hero Content Section - Below Banner */}
+        <section className="relative w-full overflow-hidden py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              {/* Badge with scroll animation */}
+              <div className="inline-block mb-6 px-6 py-3 rounded-full bg-[#866f59]/10 border border-[#866f59] text-[#866f59] text-sm font-bold uppercase tracking-widest animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "100ms" }}>
+                Esclusiva Collezione
+              </div>
+
+              {/* Main Heading with scroll animation */}
+              <h2 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "200ms" }}>
+                Dormi come in un Lusso 5 Stelle
+              </h2>
+
+              {/* Description with scroll animation */}
+              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl font-medium animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "300ms" }}>
+                Scopri i nostri materassi premium, realizzati con la tecnologia più avanzata per garantire il massimo comfort e supporto alla tua schiena.
+              </p>
+
+              {/* Features with scroll animation */}
+              <div className="flex flex-col sm:flex-row gap-6 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "400ms" }}>
+                <span className="inline-flex items-center gap-3 text-gray-700 font-semibold text-base">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#866f59] text-white font-bold text-sm">•</span>
+                  Certificati internazionali
+                </span>
+                <span className="inline-flex items-center gap-3 text-gray-700 font-semibold text-base">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#866f59] text-white font-bold text-sm">•</span>
+                  Garanzia 10 anni
+                </span>
+              </div>
+
+              {/* CTA Button with scroll animation */}
+              <a
+                href="#esclusiva-collezione"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#866f59] to-[#9d8273] hover:from-[#7a5d47] hover:to-[#8a6b58] text-white font-black rounded-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 transform text-lg shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700 group relative overflow-hidden" style={{ animationDelay: "500ms" }}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
+                <span className="relative">Scopri la Collezione →</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Hero Section */}
+        <section id="esclusiva-collezione" className="relative w-full overflow-hidden pt-20 pb-24 md:pt-40 md:pb-32">
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-yellow-50/30 -z-10"></div>
+
+          {/* Animated Background Blobs */}
+          <div className="absolute top-20 left-10 w-80 h-80 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob"></div>
+          <div className="absolute top-40 right-10 w-80 h-80 bg-gray-300 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
+
+          <div className="container flex flex-col items-center justify-center gap-16 px-4">
+            {/* Hero Header */}
+            <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-4xl">
+              <div className="inline-block mb-6 px-5 py-2 rounded-full bg-[#866f59]/10 border border-[#866f59] text-[#866f59] text-sm font-bold uppercase tracking-widest">
+                Esclusiva Collezione
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-tight">
+                Il Tuo Riposo Perfetto
+              </h1>
+
+              <p className="text-xl md:text-2xl text-gray-600 font-light leading-relaxed mb-10">
+                Scopri la nostra esclusiva collezione di materassi premium realizzati con i migliori materiali per trasformare le tue notti in momenti di puro comfort e benessere.
+              </p>
+
+              {/* Features Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 max-w-2xl mx-auto">
+                <div className="flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-200/50 hover:bg-white/80 transition-all duration-300">
+                  <span className="text-4xl">⭐</span>
+                  <span className="font-bold text-gray-900">100% Qualità</span>
+                  <span className="text-sm text-gray-600">Materiali premium selezionati</span>
+                </div>
+                <div className="flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-200/50 hover:bg-white/80 transition-all duration-300">
+                  <span className="text-4xl">🛡️</span>
+                  <span className="font-bold text-gray-900">Garanzia 10 Anni</span>
+                  <span className="text-sm text-gray-600">Protezione garantita</span>
+                </div>
+              </div>
+            </div>
+
+            <ProductList />
+          </div>
+        </section>
       </main>
     </HydrateClient>
   );

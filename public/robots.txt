@@ -1,0 +1,26 @@
+# Robots.txt for Talia Materassi
+# Questo file contiene istruzioni per i motori di ricerca
+
+# Consenti l'accesso a tutti i bot
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /.next
+Disallow: /node_modules
+
+# Crawl delay (opzionale)
+Crawl-delay: 0.5
+
+# Sitemap URL
+Sitemap: https://www.taliamatrassi.it/sitemap.xml
+
+# Specifici per Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Specifici per Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

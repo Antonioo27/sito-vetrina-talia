@@ -38,5 +38,5 @@
     "**/*.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "check-admin.js", "check-admin.mjs", "create-admin.js", "create-admin.mjs", "test-hash.mjs"]
 }
