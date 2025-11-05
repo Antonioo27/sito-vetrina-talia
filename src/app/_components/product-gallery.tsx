@@ -15,11 +15,13 @@ interface ProductGalleryProps {
 
 export function ProductGallery({ items = [], productName = "Prodotto" }: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
 
   // If no items, show placeholder
   if (items.length === 0) {
     return (
-      <div className="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+      <div className="bg-gray-50 overflow-hidden border border-gray-200">
         {/* Main Image */}
         <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
           <div className="text-center">
@@ -36,7 +38,7 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center text-gray-400 hover:from-gray-300 hover:to-gray-400 transition-all duration-300 cursor-pointer"
+              className="aspect-square bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 hover:from-gray-300 hover:to-gray-400 transition-all duration-300 cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m0 0h6m-6-6h6m0 0v6" />
@@ -52,10 +54,23 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
   if (!selectedItem) return null;
   const isVideo = selectedItem.type === "video";
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isZoomed || isVideo) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
+
   return (
-    <div className="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+    <div className="bg-gray-50 overflow-hidden border border-gray-200">
       {/* Main Display */}
-      <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden relative group">
+      <div
+        className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden relative group cursor-zoom-in"
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => !isVideo && setIsZoomed(true)}
+        onMouseLeave={() => setIsZoomed(false)}
+      >
         {isVideo ? (
           <video
             src={selectedItem.url}
@@ -66,8 +81,21 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
           <img
             src={selectedItem.url}
             alt={selectedItem.alt || productName}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className={`w-full h-full object-cover transition-transform duration-200 ${
+              isZoomed ? "scale-150" : "group-hover:scale-105"
+            }`}
+            style={isZoomed ? { transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : {}}
           />
+        )}
+
+        {/* Zoom Indicator */}
+        {!isVideo && (
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-gray-900 flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+            </svg>
+            Zoom
+          </div>
         )}
 
         {/* Video Badge */}
@@ -114,7 +142,7 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
               <button
                 key={i}
                 onClick={() => setSelectedIndex(i)}
-                className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 hover:scale-110 ${
+                className={`aspect-square overflow-hidden border-2 transition-all duration-300 hover:scale-110 ${
                   selectedIndex === i
                     ? "border-yellow-500 shadow-lg"
                     : "border-gray-300 hover:border-yellow-300"

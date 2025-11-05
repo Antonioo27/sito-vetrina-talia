@@ -13,7 +13,7 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md shadow-sm">
-      <div className="container flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-between px-4 py-2 max-w-full mx-auto">
         {/* Logo/Brand */}
         <Link
           href="/"

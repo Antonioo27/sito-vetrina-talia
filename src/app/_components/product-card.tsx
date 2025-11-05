@@ -80,7 +80,7 @@ export function ProductCard({ product, hideWishlist = false }: ProductCardProps)
   };
 
   return (
-    <div className="group relative rounded-xl overflow-hidden bg-white border border-gray-300 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+    <div className="group relative overflow-hidden bg-white border border-gray-300 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       {/* Image */}
       <div className="relative overflow-hidden bg-gray-100 h-48 w-full">
         {product.imageUrl ? (

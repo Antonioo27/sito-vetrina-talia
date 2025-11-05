@@ -5,18 +5,13 @@ export default function Contatti() {
   return (
     <main className="min-h-screen bg-white overflow-hidden">
       {/* Header */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-yellow-900 py-16">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-500 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative container mx-auto px-4">
+      <section className="w-full py-8 bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
               Contattaci
             </h1>
-            <p className="text-xl text-gray-200 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "100ms" }}>
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: "100ms" }}>
               Hai domande o vuoi saperne di più? Scrivici!
             </p>
           </div>

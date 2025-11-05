@@ -15,7 +15,7 @@ export function Footer() {
             <div className="mb-6">
               <div className="flex flex-col">
                 <h3 className="text-2xl font-black bg-gradient-to-r from-[#866f59] to-[#9d8273] bg-clip-text text-transparent leading-none">
-                  Talia
+                  Talìa
                 </h3>
                 <h3 className="text-2xl font-black bg-gradient-to-r from-[#866f59] to-[#9d8273] bg-clip-text text-transparent leading-none">
                   Materassi
@@ -125,7 +125,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div className="text-gray-400 text-sm">
             <p className="mb-2">
-              © {currentYear} <span className="font-bold text-[#866f59]">Talia Materassi</span>. Tutti i diritti riservati.
+              © {currentYear} <span className="font-bold text-[#866f59]">Talìa Materassi</span>. Tutti i diritti riservati.
             </p>
             <p className="text-xs text-gray-500">
               Sviluppato con passione per il tuo comfort

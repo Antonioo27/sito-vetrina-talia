@@ -61,7 +61,7 @@ export default function ProductDetailPage() {
           <p className="text-xl text-gray-500 font-medium">Prodotto non trovato</p>
           <Link
             href="/prodotti"
-            className="inline-flex items-center gap-2 px-6 py-3 mt-6 bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
+            className="inline-flex items-center gap-2 px-6 py-3 mt-6 bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white font-bold transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
           >
             ← Torna ai Prodotti
           </Link>
@@ -88,83 +88,44 @@ export default function ProductDetailPage() {
 
   return (
     <main className="min-h-screen bg-white overflow-hidden">
-      {/* Header */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-yellow-900 py-12">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-500 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative container mx-auto px-4">
-          <div className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Link
-              href="/prodotti"
-              className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-300"
-            >
-              ← Torna ai Prodotti
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Product Content */}
-      <section className="py-16">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Media Gallery - Left Side */}
-            <div className="animate-in fade-in slide-in-from-left-8 duration-700">
-              <ProductGallery
-                items={galleryItems}
-                productName={product.name}
-              />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
+            {/* Media Gallery - Left Side - Takes 1.5 columns space */}
+            <div className="lg:col-span-2 animate-in fade-in slide-in-from-left-8 duration-700 flex items-start">
+              <div className="w-full sticky top-24">
+                <ProductGallery
+                  items={galleryItems}
+                  productName={product.name}
+                />
+              </div>
             </div>
 
-            {/* Product Info - Right Side */}
-            <div className="animate-in fade-in slide-in-from-right-8 duration-700">
-              <div className="mb-6">
-                <div className="inline-block mb-4 px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold uppercase tracking-widest">
-                  Dettagli Prodotto
-                </div>
-
-                <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4 leading-tight">
+            {/* Product Info - Right Side - Takes 1 column */}
+            <div className="animate-in fade-in slide-in-from-right-8 duration-700 flex flex-col justify-start">
+              <div className="mb-4">
+                <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-2 leading-tight">
                   {product.name}
                 </h1>
 
                 {product.typology && (
-                  <div className="mb-4">
-                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-sm font-semibold rounded-full">
+                  <div className="mb-3">
+                    <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold">
                       {product.typology}
                     </span>
                   </div>
                 )}
 
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className="w-5 h-5 text-yellow-400 fill-current"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                        </svg>
-                      ))}
-                    </div>
-                    <span className="text-gray-600 ml-2">(0 recensioni)</span>
-                  </div>
-                </div>
-
                 {/* Price */}
                 {product.price && (
-                  <div className="mb-8 p-6 bg-gradient-to-r from-yellow-50 to-gray-50 rounded-xl border border-yellow-200">
-                    <p className="text-gray-600 text-sm mb-2">Prezzo</p>
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-4xl font-black text-gray-900">€{finalPrice?.toFixed(2)}</span>
+                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-gray-900">€{finalPrice?.toFixed(2)}</span>
                       {product.discount && product.discount > 0 && (
                         <>
-                          <span className="text-lg text-gray-500 line-through">€{product.price.toFixed(2)}</span>
-                          <span className="inline-block px-3 py-1 bg-red-500 text-white rounded-full text-sm font-bold">
+                          <span className="text-xs text-gray-500 line-through">€{product.price.toFixed(2)}</span>
+                          <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold">
                             -{product.discount}%
                           </span>
                         </>
@@ -175,9 +136,9 @@ export default function ProductDetailPage() {
 
                 {/* Description */}
                 {product.description && (
-                  <div className="mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">Descrizione</h2>
-                    <p className="text-gray-600 leading-relaxed text-lg">
+                  <div className="mb-4">
+                    <h2 className="text-sm font-bold text-gray-900 mb-1">Descrizione</h2>
+                    <p className="text-gray-600 leading-relaxed text-xs">
                       {product.description}
                     </p>
                   </div>
@@ -185,9 +146,9 @@ export default function ProductDetailPage() {
 
                 {/* Specifications */}
                 {((product as any).weight || (product as any).height || (product as any).width || (product as any).length) && (
-                  <div className="mb-8 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">Specifiche Tecniche</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
+                    <h2 className="text-sm font-bold text-gray-900 mb-2">Specifiche</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {(product as any).weight && (
                         <div className="flex items-center gap-3">
                           <span className="text-gray-600 font-semibold">Peso:</span>
@@ -216,73 +177,32 @@ export default function ProductDetailPage() {
                   </div>
                 )}
 
-                {/* Features */}
-                <div className="mb-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Caratteristiche</h3>
-                  <ul className="space-y-3">
-                    {[
-                      "Memory Foam di prima qualità",
-                      "Supporto ortopedico avanzato",
-                      "Traspirante e igienico",
-                      "Tessuto premium antistatico",
-                      "Garanzia 10 anni",
-                      "Consegna gratuita",
-                    ].map((feature, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center gap-3 text-gray-700"
-                      >
-                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-400 text-gray-900 font-bold text-sm">
-                          ✓
-                        </span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleWishlistToggle}
                     disabled={addToWishlist.isPending || removeFromWishlist.isPending}
-                    className={`flex-1 px-8 py-4 border-2 font-black rounded-xl transition-all duration-300 hover:scale-105 transform text-lg disabled:opacity-50 ${isInWishlist
-                      ? "border-red-500 bg-red-500 text-white hover:bg-red-600 hover:border-red-600"
-                      : "border-[#866f59] text-[#866f59] hover:bg-[#866f59] hover:text-white"
-                      }`}
+                    className={`px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold text-sm transition-all duration-300 disabled:opacity-50 hover:shadow-lg`}
                   >
                     {addToWishlist.isPending || removeFromWishlist.isPending
-                      ? "Aggiornamento..."
+                      ? "..."
                       : isInWishlist
-                        ? "Aggiungi alla Wishlist"
-                        : "Aggiungi alla Wishlist"}
+                        ? "❤️ Wishlist"
+                        : "♡ Aggiungi"}
                   </button>
 
                   <a
                     href={`https://wa.me/393203615767?text=Ciao%20Talia%20Materassi%2C%20mi%20interessa%20il%20prodotto%20%22${encodeURIComponent(product.name)}%22%20e%20avrei%20bisogno%20di%20maggiori%20informazioni`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-black rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105 transform text-lg group relative overflow-hidden"
+                    className="flex-1 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold text-sm transition-all duration-300 hover:shadow-lg"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                    <span className="relative">Contatta su WhatsApp</span>
+                    📞 WhatsApp
                   </a>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Back to Products */}
-      <section className="py-12 border-t border-gray-200 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <Link
-            href="/prodotti"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
-          >
-            ← Torna ai Prodotti
-          </Link>
         </div>
       </section>
     </main>

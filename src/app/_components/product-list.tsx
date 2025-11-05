@@ -47,7 +47,7 @@ export function ProductList() {
             {products.map((product, index) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-64 animate-in fade-in slide-in-from-bottom-8"
+                className="flex-shrink-0 w-72 animate-in fade-in slide-in-from-bottom-8"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <ProductCard product={product} />

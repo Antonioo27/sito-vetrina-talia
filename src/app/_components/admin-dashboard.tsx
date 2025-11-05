@@ -271,6 +271,7 @@ export function AdminDashboard() {
 
     setEditingId(product.id);
     setActiveTab("products");
+    setShowProductForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
