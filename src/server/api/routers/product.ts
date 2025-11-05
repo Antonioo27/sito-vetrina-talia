@@ -146,4 +146,50 @@ export const productRouter = createTRPCRouter({
         where: { id: input.id },
       });
     }),
+
+  toggleFeatured: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if user is admin
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.session.user.id },
+      });
+
+      if (!user?.isAdmin) {
+        throw new Error("Non autorizzato");
+      }
+
+      // Get current featured status
+      const product = await ctx.db.product.findUnique({
+        where: { id: input.id },
+        select: { featured: true },
+      });
+
+      if (!product) {
+        throw new Error("Prodotto non trovato");
+      }
+
+      // Toggle featured status
+      return ctx.db.product.update({
+        where: { id: input.id },
+        data: { featured: !product.featured },
+        include: {
+          media: {
+            orderBy: { order: "asc" },
+          },
+        },
+      });
+    }),
+
+  getFeatured: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.product.findMany({
+      where: { featured: true },
+      orderBy: { createdAt: "desc" },
+      include: {
+        media: {
+          orderBy: { order: "asc" },
+        },
+      },
+    });
+  }),
 });

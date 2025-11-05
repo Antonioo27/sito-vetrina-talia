@@ -17,7 +17,12 @@
       "Bash(timeout 60 npm run build:*)",
       "Bash(npx tsc:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(powershell -Command \"Remove-Item -Path .\\.next -Recurse -Force -ErrorAction SilentlyContinue; Write-Host ''''Cache cleaned''''\")",
+      "Bash(findstr:*)",
+      "Bash(nul)",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []

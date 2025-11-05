@@ -3,6 +3,7 @@
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ProductCard } from "~/app/_components/product-card";
 
 export default function ProdottiPage() {
   const { data: products, isLoading } = api.product.getAll.useQuery();
@@ -75,81 +76,84 @@ export default function ProdottiPage() {
         </div>
       </section>
 
-      {/* Filters Section */}
-      <section className="relative w-full py-12 border-b border-gray-200">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col gap-6">
-            {/* Search Bar */}
-            <div className="w-full">
-              <div className="relative">
-                <svg
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      {/* Main Content */}
+      <section className="py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
+            {/* Sidebar Filters */}
+            <aside className="w-full lg:w-72 lg:flex-shrink-0">
+              {/* Search Bar */}
+              <div className="mb-8">
+                <div className="relative">
+                  <svg
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Cerca..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#866f59] focus:border-transparent transition-all duration-300"
                   />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Cerca per nome o descrizione..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-300"
-                />
+                </div>
               </div>
-            </div>
 
-            {/* Typology Filter */}
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setSelectedTypology(null)}
-                className={`px-5 py-2 rounded-full font-semibold transition-all duration-300 ${
-                  selectedTypology === null
-                    ? "bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white shadow-lg"
-                    : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                }`}
-              >
-                Tutti
-              </button>
+              {/* Typology Filter */}
+              <div className="bg-white border border-gray-200 rounded-lg p-5">
+                <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Categoria</h3>
+                <div className="space-y-2.5">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="typology"
+                      checked={selectedTypology === null}
+                      onChange={() => setSelectedTypology(null)}
+                      className="w-4 h-4 text-[#866f59] rounded-full border-gray-300 focus:ring-[#866f59]"
+                    />
+                    <span className="text-sm text-gray-700 font-medium">Tutti</span>
+                    <span className="ml-auto text-xs text-gray-500">({products?.length || 0})</span>
+                  </label>
 
-              {typologies.map((typology) => (
-                <button
-                  key={typology}
-                  onClick={() =>
-                    setSelectedTypology(
-                      selectedTypology === typology ? null : typology
-                    )
-                  }
-                  className={`px-5 py-2 rounded-full font-semibold transition-all duration-300 ${
-                    selectedTypology === typology
-                      ? "bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white shadow-lg"
-                      : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                  }`}
-                >
-                  {typology}
-                </button>
-              ))}
-            </div>
+                  {typologies.map((typology) => (
+                    <label key={typology} className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="typology"
+                        checked={selectedTypology === typology}
+                        onChange={() => setSelectedTypology(selectedTypology === typology ? null : typology)}
+                        className="w-4 h-4 text-[#866f59] rounded-full border-gray-300 focus:ring-[#866f59]"
+                      />
+                      <span className="text-sm text-gray-700 font-medium">{typology}</span>
+                      <span className="ml-auto text-xs text-gray-500">
+                        ({products?.filter((p) => (p as any).typology === typology).length || 0})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-            {/* Results Count */}
-            <div className="text-sm text-gray-600">
-              Mostrando {filteredProducts?.length || 0} prodotto
-              {filteredProducts?.length !== 1 ? "i" : ""} di{" "}
-              {products?.length || 0}
-            </div>
-          </div>
-        </div>
-      </section>
+              {/* Results Summary */}
+              <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-xs text-gray-600">
+                  <span className="font-bold text-gray-900">{filteredProducts?.length || 0}</span> prodotto
+                  {filteredProducts?.length !== 1 ? "i" : ""} trovato
+                  {filteredProducts?.length !== 1 ? "i" : ""}
+                </p>
+              </div>
+            </aside>
 
-      {/* Products Grid */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
+            {/* Products Grid */}
+            <div className="flex-1">
           {isLoading ? (
             <div className="rounded-3xl border-2 border-dashed border-gray-300 p-16 text-center bg-gray-50 animate-pulse">
               <p className="text-xl text-gray-500 font-medium">⏳ Caricamento prodotti...</p>
@@ -168,89 +172,20 @@ export default function ProdottiPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {filteredProducts.map((product, index) => (
-                <div
-                  key={product.id}
-                  className="group relative rounded-3xl overflow-hidden bg-white border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 animate-in fade-in slide-in-from-bottom-8"
-                  style={{ animationDelay: `${index * 150}ms` }}
-                >
-                  {/* Image Container */}
-                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-72">
-                    {product.imageUrl ? (
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-120"
-                      />
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center gap-2">
-                        <span className="text-5xl"></span>
-                        <span className="text-gray-400">No image</span>
-                      </div>
-                    )}
-
-                    {/* Typology Badge */}
-                    {(product as any).typology && (
-                      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-md">
-                        {(product as any).typology}
-                      </div>
-                    )}
-
-                    {/* Price Badge */}
-                    {product.price && (
-                      <div className="absolute bottom-4 right-4 flex flex-col items-end gap-2">
-                        {(product as any).discount && (product as any).discount > 0 ? (
-                          <>
-                            <div className="text-sm font-bold text-white bg-red-500 px-3 py-1 rounded-full shadow-md">
-                              -{(product as any).discount}%
-                            </div>
-                            <div className="flex items-baseline gap-2">
-                              <span className="text-xs text-gray-600 line-through">
-                                €{product.price.toFixed(2)}
-                              </span>
-                              <div className="bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white px-4 py-2 rounded-lg font-black text-base shadow-lg">
-                                €{(product.price * (1 - (product as any).discount / 100)).toFixed(2)}
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white px-4 py-2 rounded-lg font-black text-base shadow-lg">
-                            €{product.price.toFixed(2)}
-                          </div>
-                        )}
-                      </div>
-                    )}
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredProducts.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="animate-in fade-in slide-in-from-bottom-8"
+                    style={{ animationDelay: `${index * 150}ms` }}
+                  >
+                    <ProductCard product={product} />
                   </div>
-
-                  {/* Content */}
-                  <div className="p-7">
-                    <h3 className="text-2xl font-black text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300 line-clamp-2">
-                      {product.name}
-                    </h3>
-
-                    {product.description && (
-                      <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3 h-[3.75rem]">
-                        {product.description}
-                      </p>
-                    )}
-
-                    {/* CTA Button */}
-                    <a
-                      href={`/prodotto/${product.id}`}
-                      className="inline-block w-full px-6 py-3 bg-gradient-to-r from-[#866f59] to-[#9d8273] hover:from-[#7a5d47] hover:to-[#8a6b58] text-white font-bold rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 transform text-lg text-center group relative overflow-hidden"
-                    >
-                      <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></span>
-                      <span className="relative">Scopri di più →</span>
-                    </a>
-                  </div>
-
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"></div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
             </div>
-          )}
+          </div>
         </div>
       </section>
 

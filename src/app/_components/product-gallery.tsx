@@ -49,6 +49,7 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
   }
 
   const selectedItem = items[selectedIndex];
+  if (!selectedItem) return null;
   const isVideo = selectedItem.type === "video";
 
   return (

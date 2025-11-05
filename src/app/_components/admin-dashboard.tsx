@@ -27,6 +27,8 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"products" | "typologies" | "banners">("products");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [bannerAltText, setBannerAltText] = useState("");
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [searchProduct, setSearchProduct] = useState("");
   const fileInputBannerRef = useRef<HTMLInputElement>(null);
 
   const { data: products, refetch } = api.product.getAll.useQuery();
@@ -59,6 +61,14 @@ export function AdminDashboard() {
     },
   });
 
+  const toggleFeaturedMutation = api.product.toggleFeatured.useMutation({
+    onSuccess: () => {
+      void refetch();
+      setSuccessMessage("Stato prodotto in evidenza aggiornato!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    },
+  });
+
   const createTypologyMutation = api.typology.create.useMutation({
     onSuccess: () => {
       void refetchTypologies();
@@ -87,6 +97,11 @@ export function AdminDashboard() {
       void refetchBanners();
       setSuccessMessage("Banner aggiornato con successo!");
       setTimeout(() => setSuccessMessage(""), 3000);
+    },
+    onError: (error) => {
+      console.error("Banner mutation error:", error);
+      setSuccessMessage(`Errore: ${error.message}`);
+      setTimeout(() => setSuccessMessage(""), 5000);
     },
   });
 
@@ -153,11 +168,14 @@ export function AdminDashboard() {
         if (loadedCount === Array.from(files).length) {
           setUploadedImages((prev) => [...prev, ...newImages]);
           // Set the first image as main imageUrl if we don't have one
-          if (uploadedImages.length === 0 && newImages.length > 0 && newImages[0]) {
-            setFormData((prev) => ({
-              ...prev,
-              imageUrl: newImages[0].url,
-            }));
+          if (uploadedImages.length === 0 && newImages.length > 0) {
+            const firstImage = newImages[0];
+            if (firstImage) {
+              setFormData((prev) => ({
+                ...prev,
+                imageUrl: firstImage.url,
+              }));
+            }
           }
         }
       };
@@ -169,11 +187,14 @@ export function AdminDashboard() {
     setUploadedImages((prev) => {
       const newImages = prev.filter((_, i) => i !== index);
       // If we removed the first image and have more, update main imageUrl
-      if (index === 0 && newImages.length > 0 && newImages[0]) {
-        setFormData((prev) => ({
-          ...prev,
-          imageUrl: newImages[0].url,
-        }));
+      if (index === 0 && newImages.length > 0) {
+        const firstImage = newImages[0];
+        if (firstImage) {
+          setFormData((prev) => ({
+            ...prev,
+            imageUrl: firstImage.url,
+          }));
+        }
       }
       return newImages;
     });
@@ -276,16 +297,6 @@ export function AdminDashboard() {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Info Section */}
-      <section className="rounded-2xl border border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 p-8 animate-in fade-in slide-in-from-left-4 duration-700">
-        <h2 className="mb-3 text-2xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 bg-clip-text text-transparent">
-          Gestione Catalogo
-        </h2>
-        <p className="text-gray-700">
-          Gestisci i tuoi prodotti, le tipologie e carica immagini direttamente dal tuo dispositivo.
-        </p>
-      </section>
-
       {/* Success Message */}
       {successMessage && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-green-800 animate-in fade-in slide-in-from-top-2 duration-500 font-medium">
@@ -330,7 +341,34 @@ export function AdminDashboard() {
       {/* Products Tab */}
       {activeTab === "products" && (
         <>
-          {/* Form */}
+          {/* Product Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+            {/* Aggiungi Prodotto Button */}
+            <button
+              onClick={() => {
+                setShowProductForm(!showProductForm);
+                if (!showProductForm) {
+                  setEditingId(null);
+                  resetForm();
+                }
+              }}
+              className="px-6 py-2.5 bg-gradient-to-r from-[#866f59] to-[#9d8273] hover:from-[#7a5d47] hover:to-[#8a6b58] text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 text-sm"
+            >
+              {showProductForm ? "Nascondi Form" : "Aggiungi Prodotto"}
+            </button>
+
+            {/* Search Bar */}
+            <input
+              type="text"
+              placeholder="Cerca prodotto per nome..."
+              value={searchProduct}
+              onChange={(e) => setSearchProduct(e.target.value)}
+              className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#866f59] focus:border-transparent"
+            />
+          </div>
+
+          {/* Form - Collapsible */}
+          {showProductForm && (
           <section className="max-w-4xl rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-sm hover:shadow-lg transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-yellow-600 bg-clip-text text-transparent">
@@ -593,6 +631,7 @@ export function AdminDashboard() {
               )}
             </form>
           </section>
+          )}
 
           {/* Catalogo */}
           <section className="max-w-7xl">
@@ -602,6 +641,7 @@ export function AdminDashboard() {
               </h2>
               <p className="text-gray-600">
                 Totale: <span className="font-bold text-gray-900">{products?.length ?? 0}</span> prodotti
+                {searchProduct && <span> | Risultati: <span className="font-bold">{(products ?? []).filter(p => p.name.toLowerCase().includes(searchProduct.toLowerCase())).length}</span></span>}
               </p>
             </div>
 
@@ -611,20 +651,33 @@ export function AdminDashboard() {
                 <p className="text-gray-400 mt-2">Aggiungi il primo prodotto per iniziare</p>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {products.map((product, index) => (
+              <>
+                {/* Filtro Results Message */}
+                {searchProduct && (products ?? []).filter(p => p.name.toLowerCase().includes(searchProduct.toLowerCase())).length === 0 && (
+                  <div className="rounded-2xl border border-yellow-200 bg-yellow-50 p-6 text-center mb-8">
+                    <p className="text-gray-600">Nessun prodotto corrisponde a "<strong>{searchProduct}</strong>"</p>
+                  </div>
+                )}
+
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {(products ?? [])
+                    .filter(product =>
+                      searchProduct === "" ||
+                      product.name.toLowerCase().includes(searchProduct.toLowerCase())
+                    )
+                    .map((product, index) => (
                   <div
                     key={product.id}
-                    className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-in fade-in"
+                    className="rounded-xl border border-gray-300 bg-white overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 animate-in fade-in"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     {/* Image */}
                     {product.imageUrl && (
-                      <div className="relative overflow-hidden bg-gray-100 h-40">
+                      <div className="relative overflow-hidden bg-gray-100 h-48">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
+                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                         />
                       </div>
                     )}
@@ -636,7 +689,7 @@ export function AdminDashboard() {
                       </h3>
 
                       {(product as any).typology && (
-                        <p className="text-xs font-semibold text-yellow-600 mb-2 uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
                           {(product as any).typology}
                         </p>
                       )}
@@ -654,42 +707,63 @@ export function AdminDashboard() {
                               <p className="text-sm text-gray-500 line-through">
                                 €{product.price.toFixed(2)}
                               </p>
-                              <p className="text-xl font-bold text-red-600">
+                              <p className="text-xl font-bold text-gray-900">
                                 €{(product.price * (1 - (product as any).discount / 100)).toFixed(2)}
                               </p>
-                              <span className="text-xs font-bold bg-red-100 text-red-700 px-2 py-1 rounded">
+                              <span className="text-xs font-bold bg-gray-200 text-gray-700 px-2 py-1 rounded">
                                 -{(product as any).discount}%
                               </span>
                             </div>
                           ) : (
-                            <p className="text-xl font-bold text-yellow-600">
+                            <p className="text-xl font-bold text-gray-900">
                               €{product.price.toFixed(2)}
                             </p>
                           )}
                         </div>
                       )}
 
+                      {/* Featured Badge */}
+                      {(product as any).featured && (
+                        <div className="mb-3 inline-block px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full">
+                          ⭐ In Evidenza
+                        </div>
+                      )}
+
                       {/* Buttons */}
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-col">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            disabled={isLoading}
+                            className="flex-1 rounded-lg bg-blue-50 text-blue-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-blue-100 disabled:opacity-50 hover:scale-105 active:scale-95"
+                          >
+                            Modifica
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            disabled={isLoading}
+                            className="flex-1 rounded-lg bg-red-50 text-red-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-red-100 disabled:opacity-50 hover:scale-105 active:scale-95"
+                          >
+                            Elimina
+                          </button>
+                        </div>
                         <button
-                          onClick={() => handleEdit(product)}
-                          disabled={isLoading}
-                          className="flex-1 rounded-lg bg-blue-50 text-blue-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-blue-100 disabled:opacity-50 hover:scale-105 active:scale-95"
+                          onClick={() => void toggleFeaturedMutation.mutateAsync({ id: product.id })}
+                          disabled={toggleFeaturedMutation.isPending}
+                          className={`w-full rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 active:scale-95 ${
+                            (product as any).featured
+                              ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          } disabled:opacity-50`}
                         >
-                          Modifica
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          disabled={isLoading}
-                          className="flex-1 rounded-lg bg-red-50 text-red-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-red-100 disabled:opacity-50 hover:scale-105 active:scale-95"
-                        >
-                          Elimina
+                          {(product as any).featured ? "Rimuovi da Evidenza" : "Aggiungi ad Evidenza"}
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
+                </div>
+              </>
             )}
           </section>
         </>
@@ -806,20 +880,15 @@ export function AdminDashboard() {
               )}
 
               <button
-                onClick={async () => {
+                onClick={() => {
                   if (!bannerImageUrl) {
                     alert("Carica un'immagine per il banner");
                     return;
                   }
-                  try {
-                    await upsertBannerMutation.mutateAsync({
-                      imageUrl: bannerImageUrl,
-                      altText: bannerAltText || undefined,
-                    });
-                  } catch (error) {
-                    console.error("Banner save error:", error);
-                    alert("Errore nel salvataggio del banner");
-                  }
+                  void upsertBannerMutation.mutateAsync({
+                    imageUrl: bannerImageUrl,
+                    altText: bannerAltText || undefined,
+                  });
                 }}
                 disabled={upsertBannerMutation.isPending}
                 className="w-full rounded-lg bg-gradient-to-r from-[#866f59] to-[#9d8273] hover:from-[#7a5d47] hover:to-[#8a6b58] text-white font-bold py-2.5 text-sm transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"

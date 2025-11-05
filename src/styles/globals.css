@@ -72,6 +72,26 @@
   .animate-scale-pulse {
     animation: scale-pulse 2s ease-in-out infinite;
   }
+
+  /* Custom scrollbar styling for product carousel */
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
 }
 
 @keyframes blob {

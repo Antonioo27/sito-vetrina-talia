@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { ProductList } from "~/app/_components/product-list";
+import { BannerSection } from "~/app/_components/banner-section";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { api, HydrateClient } from "~/trpc/server";
@@ -35,44 +36,14 @@ export default async function Home() {
     console.log("[HOME] No session, showing home page for anonymous user");
   }
 
-  // Prefetch products
+  // Prefetch products and active banner
   void api.product.getAll.prefetch();
+  void api.banner.getActive.prefetch();
 
   return (
     <HydrateClient>
+      <BannerSection />
       <main className="flex flex-col bg-white overflow-hidden">
-        {/* Full Banner Section */}
-        <section className="relative w-full h-screen flex items-end justify-center overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0 w-full h-full">
-            <img
-              src="/images/banner.jpg"
-              alt="Talia Materassi - Materassi Premium"
-              className="w-full h-full object-cover"
-            />
-            {/* Smart Overlay - Gradient + Blur for text area */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/20 to-transparent"></div>
-          </div>
-
-          {/* Banner Text - Bottom Center */}
-          <div className="relative z-10 container mx-auto px-4 pb-16 text-center">
-            <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-              <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">
-                Talia Materassi
-              </h1>
-              <p className="text-lg md:text-xl text-gray-100">
-                Scopri il comfort del lusso
-              </p>
-            </div>
-          </div>
-
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </section>
 
         {/* Hero Content Section - Below Banner */}
         <section className="relative w-full overflow-hidden py-20 bg-white">

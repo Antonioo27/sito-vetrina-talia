@@ -47,11 +47,11 @@ export const authConfig = {
       async authorize(credentials) {
         // Validate input
         if (!credentials?.email || !credentials?.password) {
-          console.log("[AUTH] ❌ Missing email or password");
+          console.log("[AUTH] Missing email or password");
           return null;
         }
 
-        console.log(`[AUTH] 🔑 Login attempt for: ${credentials.email}`);
+        console.log(`[AUTH] Login attempt for: ${credentials.email}`);
 
         // Find user
         const user = await db.user.findUnique({
@@ -163,6 +163,7 @@ export const authConfig = {
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   cookies: {
     sessionToken: {

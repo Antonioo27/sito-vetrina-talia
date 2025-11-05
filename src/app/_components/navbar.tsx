@@ -26,7 +26,7 @@ export function Navbar() {
           />
           <div className="hidden sm:flex flex-col">
             <span className="text-2xl font-black bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-none">
-              Talia
+              Talìa
             </span>
             <span className="text-2xl font-black bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent leading-none">
               Materassi
@@ -36,33 +36,37 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex md:items-center md:gap-8">
-          {/* Main Navigation Links */}
-          <div className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
-            >
-              <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-              Home
-            </Link>
-            <Link
-              href="/contatti"
-              className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
-            >
-              <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-              Contatti
-            </Link>
-            <Link
-              href="/prodotti"
-              className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
-            >
-              <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-              Prodotti
-            </Link>
-          </div>
+          {/* Main Navigation Links - Hidden for Admin */}
+          {!isAuthenticated || !session?.user?.isAdmin ? (
+            <>
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/"
+                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                >
+                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  Home
+                </Link>
+                <Link
+                  href="/contatti"
+                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                >
+                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  Contatti
+                </Link>
+                <Link
+                  href="/prodotti"
+                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                >
+                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  Prodotti
+                </Link>
+              </div>
 
-          {/* Separator */}
-          <div className="w-px h-6 bg-gray-300"></div>
+              {/* Separator */}
+              <div className="w-px h-6 bg-gray-300"></div>
+            </>
+          ) : null}
 
           {/* Auth & Admin Section */}
           <div className="flex items-center gap-4">
@@ -70,6 +74,20 @@ export function Navbar() {
               <div className="text-sm font-medium text-gray-700">Caricamento...</div>
             ) : isAuthenticated ? (
               <>
+                {/* Wishlist Link - Hidden for Admin */}
+                {!session?.user?.isAdmin && (
+                  <Link
+                    href="/wishlist"
+                    className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                    title="La mia Wishlist"
+                  >
+                    <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </Link>
+                )}
+
                 <button
                   onClick={() => void signOut({ redirectTo: "/" })}
                   className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
@@ -124,27 +142,32 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="border-t border-gray-200 bg-white animate-in slide-in-from-top-2 duration-300 md:hidden">
           <div className="flex flex-col gap-2 px-4 py-4">
-            <Link
-              href="/"
-              className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/contatti"
-              className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contatti
-            </Link>
-            <Link
-              href="/prodotti"
-              className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Prodotti
-            </Link>
+            {/* Navigation Links - Hidden for Admin */}
+            {!isAuthenticated || !session?.user?.isAdmin ? (
+              <>
+                <Link
+                  href="/"
+                  className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/contatti"
+                  className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contatti
+                </Link>
+                <Link
+                  href="/prodotti"
+                  className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Prodotti
+                </Link>
+              </>
+            ) : null}
 
             <div className="border-t border-gray-200 my-2 pt-2">
               {isLoading ? (
@@ -153,6 +176,19 @@ export function Navbar() {
                 </div>
               ) : isAuthenticated ? (
                 <>
+                  {/* Wishlist Link - Hidden for Admin */}
+                  {!session?.user?.isAdmin && (
+                    <Link
+                      href="/wishlist"
+                      className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      La mia Wishlist
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       void signOut({ redirectTo: "/" });

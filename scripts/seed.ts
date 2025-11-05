@@ -44,23 +44,35 @@ async function main() {
     console.log(`   Admin: ${admin.isAdmin}`);
     console.log(`   ID: ${admin.id}\n`);
 
-    // Create demo user
-    console.log("👤 Creating demo user...");
-    const demoHashedPassword = hashPassword("Demo123!");
-
-    const demoUser = await db.user.create({
-      data: {
-        id: "user-1",
-        email: "demo@example.com",
-        firstName: "Demo",
-        lastName: "User",
-        password: demoHashedPassword,
-        isAdmin: false,
-        emailVerified: new Date(),
-      },
+    // Create or skip demo user
+    console.log("👤 Checking demo user...");
+    const existingDemoUser = await db.user.findUnique({
+      where: { email: "demo@example.com" },
     });
 
-    console.log("✅ Demo user created successfully!\n");
+    let demoUser;
+    if (existingDemoUser) {
+      console.log("ℹ️  Demo user already exists, skipping creation\n");
+      demoUser = existingDemoUser;
+    } else {
+      console.log("Creating demo user...");
+      const demoHashedPassword = hashPassword("Demo123!");
+
+      demoUser = await db.user.create({
+        data: {
+          id: "user-1",
+          email: "demo@example.com",
+          firstName: "Demo",
+          lastName: "User",
+          password: demoHashedPassword,
+          isAdmin: false,
+          emailVerified: new Date(),
+        },
+      });
+
+      console.log("✅ Demo user created successfully!\n");
+    }
+
     console.log("📋 Demo User Details:");
     console.log(`   Email: ${demoUser.email}`);
     console.log(`   Name: ${demoUser.firstName} ${demoUser.lastName}`);
@@ -101,6 +113,26 @@ async function main() {
     }
 
     console.log(`✅ Created ${products.length} demo products\n`);
+
+    // Create default banner
+    console.log("🖼️  Creating default banner...");
+
+    const existingBanner = await db.banner.findFirst({
+      where: { active: true },
+    });
+
+    if (existingBanner) {
+      console.log("Banner attivo già presente, skipping banner creation");
+    } else {
+      await db.banner.create({
+        data: {
+          imageUrl: "https://images.unsplash.com/photo-1633614122556-11b3c4b1289d?w=1200&h=400&fit=crop",
+          altText: "Talia Materassi - Materassi di Qualità Premium",
+          active: true,
+        },
+      });
+      console.log("✅ Default banner created successfully!\n");
+    }
 
     console.log("🎉 Database seeding completed successfully!\n");
     console.log("🔑 Login Credentials:");

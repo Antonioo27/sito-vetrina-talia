@@ -92,6 +92,7 @@ model Product {
     discount    Float?    // Discount percentage (0-100)
     imageUrl    String?   // Legacy - still supported but use ProductMedia instead
     typology    String?   // Categories: Molle, Memory Foam, Hybrid, Latex, Orthopedic, etc.
+    featured    Boolean   @default(false) // Whether to show in "Le Nostre Novità" section
 
     // Product specifications
     weight      Float?    // Weight in kg

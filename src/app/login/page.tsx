@@ -19,6 +19,13 @@ export default function LoginPage() {
       setRegistered(true);
       setTimeout(() => setRegistered(false), 5000);
     }
+
+    // Check for NextAuth error parameter
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      console.log("[LOGIN] Error from NextAuth:", errorParam);
+      setError("Email o password non valide");
+    }
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,6 +36,13 @@ export default function LoginPage() {
     try {
       console.log("[LOGIN] Attempting login with:", { email });
 
+      // Validate inputs
+      if (!email || !password) {
+        setError("Email e password sono obbligatori");
+        setIsLoading(false);
+        return;
+      }
+
       // Use signIn with redirect: false so we can manually handle the redirect
       const result = await signIn("credentials", {
         email,
@@ -38,9 +52,16 @@ export default function LoginPage() {
 
       console.log("[LOGIN] SignIn result:", result);
 
-      if (!result?.ok) {
-        console.error("[LOGIN] SignIn failed");
+      if (!result?.ok || result?.error) {
+        console.error("[LOGIN] SignIn failed:", result?.error);
         setError("Email o password non valide");
+        setIsLoading(false);
+        return;
+      }
+
+      if (result?.status !== 200) {
+        console.error("[LOGIN] Unexpected status:", result?.status);
+        setError("Errore durante il login");
         setIsLoading(false);
         return;
       }
