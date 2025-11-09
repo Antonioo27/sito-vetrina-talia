@@ -11,7 +11,10 @@ export default function ProductDetailPage() {
   const params = useParams();
   const productId = params.id as string;
   const [mounted, setMounted] = useState(false);
+  const [localWishlistStatus, setLocalWishlistStatus] = useState(false);
   const { data: session } = useSession();
+
+  const utils = api.useUtils();
 
   const { data: product, isLoading } = api.product.getById.useQuery(
     { id: productId },
@@ -23,8 +26,28 @@ export default function ProductDetailPage() {
     { enabled: mounted && !!productId && !!session?.user }
   );
 
-  const addToWishlist = api.wishlist.add.useMutation();
-  const removeFromWishlist = api.wishlist.remove.useMutation();
+  // Sincronizza lo stato locale con il dato dal server
+  useEffect(() => {
+    if (isInWishlist !== undefined) {
+      setLocalWishlistStatus(isInWishlist);
+    }
+  }, [isInWishlist]);
+
+  const addToWishlist = api.wishlist.add.useMutation({
+    onSuccess: () => {
+      // Invalidate le query per aggiornare i dati
+      utils.wishlist.isInWishlist.invalidate({ productId });
+      utils.wishlist.getAll.invalidate();
+    },
+  });
+
+  const removeFromWishlist = api.wishlist.remove.useMutation({
+    onSuccess: () => {
+      // Invalidate le query per aggiornare i dati
+      utils.wishlist.isInWishlist.invalidate({ productId });
+      utils.wishlist.getAll.invalidate();
+    },
+  });
 
   const handleWishlistToggle = async () => {
     if (!session?.user) {
@@ -33,10 +56,19 @@ export default function ProductDetailPage() {
       return;
     }
 
-    if (isInWishlist) {
-      await removeFromWishlist.mutateAsync({ productId });
-    } else {
-      await addToWishlist.mutateAsync({ productId });
+    // Aggiorna immediatamente lo stato locale per feedback istantaneo
+    setLocalWishlistStatus(!localWishlistStatus);
+
+    try {
+      if (localWishlistStatus) {
+        await removeFromWishlist.mutateAsync({ productId });
+      } else {
+        await addToWishlist.mutateAsync({ productId });
+      }
+    } catch (error) {
+      // Se c'è un errore, ripristina lo stato precedente
+      setLocalWishlistStatus(localWishlistStatus);
+      console.error("Errore nella gestione della wishlist:", error);
     }
   };
 
@@ -60,10 +92,10 @@ export default function ProductDetailPage() {
         <div className="text-center">
           <p className="text-xl text-gray-500 font-medium">Prodotto non trovato</p>
           <Link
-            href="/prodotti"
+            href="/catalogo"
             className="inline-flex items-center gap-2 px-6 py-3 mt-6 bg-gradient-to-r from-[#866f59] to-[#9d8273] text-white font-bold transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
           >
-            ← Torna ai Prodotti
+            ← Torna al Catalogo
           </Link>
         </div>
       </main>
@@ -186,7 +218,7 @@ export default function ProductDetailPage() {
                   >
                     {addToWishlist.isPending || removeFromWishlist.isPending
                       ? "..."
-                      : isInWishlist
+                      : localWishlistStatus
                         ? "❤️ Wishlist"
                         : "♡ Aggiungi"}
                   </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { ProductCard } from "~/app/_components/product-card";
 
@@ -9,6 +9,7 @@ export default function ProdottiPage() {
   const { data: products, isLoading } = api.product.getAll.useQuery();
   const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedTypology, setSelectedTypology] = useState<string | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<typeof products>([]);
 
@@ -16,27 +17,39 @@ export default function ProdottiPage() {
     setMounted(true);
   }, []);
 
-  // Extract unique typologies from products
-  const typologies = products
-    ? Array.from(new Set(
-        products
-          .map((p) => (p as any).typology)
-          .filter((t) => t !== null && t !== undefined)
-      ))
-    : [];
+  // Debounce search term (300ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
 
-  // Filter products based on search term and selected typology
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Memoizzare typologies per evitare ricalcoli
+  const typologies = useMemo(() => {
+    return products
+      ? Array.from(new Set(
+          products
+            .map((p) => (p as any).typology)
+            .filter((t) => t !== null && t !== undefined)
+        ))
+      : [];
+  }, [products]);
+
+  // Filter products based on debounced search term and selected typology
   useEffect(() => {
     if (!products) return;
 
     let result = products;
 
-    // Filter by search term
-    if (searchTerm.trim()) {
+    // Filter by search term (con debounce)
+    if (debouncedSearchTerm.trim()) {
+      const searchLower = debouncedSearchTerm.toLowerCase();
       result = result.filter(
         (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+          product.name.toLowerCase().includes(searchLower) ||
+          product.description?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -48,7 +61,7 @@ export default function ProdottiPage() {
     }
 
     setFilteredProducts(result);
-  }, [products, searchTerm, selectedTypology]);
+  }, [products, debouncedSearchTerm, selectedTypology]);
 
   // During SSR and hydration, render nothing to avoid mismatch
   if (!mounted) {

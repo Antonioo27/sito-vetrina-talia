@@ -22,7 +22,9 @@
       "Bash(powershell -Command \"Remove-Item -Path .\\.next -Recurse -Force -ErrorAction SilentlyContinue; Write-Host ''''Cache cleaned''''\")",
       "Bash(findstr:*)",
       "Bash(nul)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(dir \"C:\\Users\\HP\\Documents\\sito-vetrina-talia\\src\\app\\prodotti\")",
+      "Bash(move prodotti catalogo)"
     ],
     "deny": [],
     "ask": []

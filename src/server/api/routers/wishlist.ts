@@ -6,7 +6,7 @@ import {
 } from "~/server/api/trpc";
 
 export const wishlistRouter = createTRPCRouter({
-  // Get all wishlist items for the current user
+  // Get all wishlist items for the current user (con media per la pagina wishlist)
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.wishlist.findMany({
       where: { userId: ctx.session.user.id },
@@ -21,6 +21,14 @@ export const wishlistRouter = createTRPCRouter({
       },
       orderBy: { createdAt: "desc" },
     });
+  }),
+
+  // Ottimizzato: Query solo per conteggio wishlist (usato nella navbar)
+  getCount: protectedProcedure.query(async ({ ctx }) => {
+    const count = await ctx.db.wishlist.count({
+      where: { userId: ctx.session.user.id },
+    });
+    return count;
   }),
 
   // Check if a product is in wishlist

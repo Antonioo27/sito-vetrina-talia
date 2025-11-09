@@ -37,8 +37,8 @@ export default function Contatti() {
                   {/* Address */}
                   <div>
                     <p className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Indirizzo</p>
-                    <p className="text-gray-900 font-medium">Via Michelangelo 23</p>
-                    <p className="text-gray-900 font-medium">50028 Barberino Tavarnelle (FI)</p>
+                    <p className="text-gray-900 font-medium">Str. Istonia, 43</p>
+                    <p className="text-gray-900 font-medium">66050 San Salvo (CH)</p>
                   </div>
 
                   {/* Phone Numbers */}
@@ -48,13 +48,7 @@ export default function Contatti() {
                       <svg className="w-4 h-4 text-[#866f59]" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.79l.291 2.058a1 1 0 01-.471 1.023l-1.097.582a2.972 2.972 0 001.735 5.195l1.097.582a1 1 0 01.471 1.023l-.291 2.058A1 1 0 015.153 17H3a1 1 0 01-1-1V3z" />
                       </svg>
-                      <a href="tel:+39055807036" className="text-gray-900 font-medium hover:text-[#866f59] transition">+39 055 807036</a>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-[#866f59]" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.79l.291 2.058a1 1 0 01-.471 1.023l-1.097.582a2.972 2.972 0 001.735 5.195l1.097.582a1 1 0 01.471 1.023l-.291 2.058A1 1 0 015.153 17H3a1 1 0 01-1-1V3z" />
-                      </svg>
-                      <a href="tel:+39055807162" className="text-gray-900 font-medium hover:text-[#866f59] transition">+39 055 807162</a>
+                      <a href="tel:+39 388 173 4335" className="text-gray-900 font-medium hover:text-[#866f59] transition">+39 388 173 4335</a>
                     </div>
                   </div>
 

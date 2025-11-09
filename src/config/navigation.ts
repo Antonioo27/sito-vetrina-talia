@@ -10,9 +10,9 @@ export const mainMenu = [
     description: "Contattaci per informazioni",
   },
   {
-    label: "Prodotti",
-    href: "/prodotti",
-    description: "Scopri i nostri prodotti",
+    label: "Catalogo",
+    href: "/catalogo",
+    description: "Scopri il nostro catalogo",
   },
 ];
 

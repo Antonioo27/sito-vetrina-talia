@@ -26,13 +26,21 @@ const productWithMediaSchema = productInputSchema.extend({
 });
 
 export const productRouter = createTRPCRouter({
+  // Ottimizzata: carica prodotti senza media per il catalogo
   getAll: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.product.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
-        media: {
-          orderBy: { order: "asc" },
-        },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        discount: true,
+        imageUrl: true,
+        typology: true,
+        featured: true,
+        createdAt: true,
+        // NON carichiamo media qui - si caricano nella pagina dettaglio
       },
     });
   }),
@@ -53,12 +61,8 @@ export const productRouter = createTRPCRouter({
   create: protectedProcedure
     .input(productWithMediaSchema)
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
-
-      if (!user?.isAdmin) {
+      // Check if user is admin (ottimizzato: usa session già disponibile)
+      if (!ctx.session.user.isAdmin) {
         throw new Error("Non autorizzato");
       }
 
@@ -94,12 +98,8 @@ export const productRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
-
-      if (!user?.isAdmin) {
+      // Check if user is admin (ottimizzato: usa session già disponibile)
+      if (!ctx.session.user.isAdmin) {
         throw new Error("Non autorizzato");
       }
 
@@ -133,12 +133,8 @@ export const productRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
-
-      if (!user?.isAdmin) {
+      // Check if user is admin (ottimizzato: usa session già disponibile)
+      if (!ctx.session.user.isAdmin) {
         throw new Error("Non autorizzato");
       }
 
@@ -150,12 +146,8 @@ export const productRouter = createTRPCRouter({
   toggleFeatured: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Check if user is admin
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
-
-      if (!user?.isAdmin) {
+      // Check if user is admin (ottimizzato: usa session già disponibile)
+      if (!ctx.session.user.isAdmin) {
         throw new Error("Non autorizzato");
       }
 

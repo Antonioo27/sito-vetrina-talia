@@ -660,7 +660,7 @@ export function AdminDashboard() {
                   </div>
                 )}
 
-                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {(products ?? [])
                     .filter(product =>
                       searchProduct === "" ||
@@ -669,12 +669,12 @@ export function AdminDashboard() {
                     .map((product, index) => (
                   <div
                     key={product.id}
-                    className="rounded-xl border border-gray-300 bg-white overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 animate-in fade-in"
+                    className="rounded-xl border border-gray-300 bg-white overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 animate-in fade-in flex flex-col h-full"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     {/* Image */}
                     {product.imageUrl && (
-                      <div className="relative overflow-hidden bg-gray-100 h-48">
+                      <div className="relative overflow-hidden bg-gray-100 h-28">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
@@ -684,39 +684,39 @@ export function AdminDashboard() {
                     )}
 
                     {/* Content */}
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    <div className="p-3 flex flex-col flex-1">
+                      <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">
                         {product.name}
                       </h3>
 
                       {(product as any).typology && (
-                        <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide line-clamp-1">
                           {(product as any).typology}
                         </p>
                       )}
 
                       {product.description && (
-                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                        <p className="text-gray-600 text-xs mb-2 line-clamp-1 flex-shrink-0">
                           {product.description}
                         </p>
                       )}
 
                       {product.price && (
-                        <div className="mb-4">
+                        <div className="mb-2 flex-shrink-0">
                           {(product as any).discount && (product as any).discount > 0 ? (
-                            <div className="flex items-center gap-3">
-                              <p className="text-sm text-gray-500 line-through">
+                            <div className="flex items-center gap-1 text-xs">
+                              <p className="text-gray-500 line-through">
                                 €{product.price.toFixed(2)}
                               </p>
-                              <p className="text-xl font-bold text-gray-900">
+                              <p className="font-bold text-gray-900">
                                 €{(product.price * (1 - (product as any).discount / 100)).toFixed(2)}
                               </p>
-                              <span className="text-xs font-bold bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                              <span className="text-xs font-bold bg-gray-200 text-gray-700 px-1 py-0.5 rounded">
                                 -{(product as any).discount}%
                               </span>
                             </div>
                           ) : (
-                            <p className="text-xl font-bold text-gray-900">
+                            <p className="text-sm font-bold text-gray-900">
                               €{product.price.toFixed(2)}
                             </p>
                           )}
@@ -725,25 +725,25 @@ export function AdminDashboard() {
 
                       {/* Featured Badge */}
                       {(product as any).featured && (
-                        <div className="mb-3 inline-block px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full">
-                          ⭐ In Evidenza
+                        <div className="mb-2 inline-block px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full w-fit">
+                          ⭐ Evidenza
                         </div>
                       )}
 
                       {/* Buttons */}
-                      <div className="flex gap-2 flex-col">
-                        <div className="flex gap-2">
+                      <div className="flex gap-1 flex-col mt-auto pt-2">
+                        <div className="flex gap-1">
                           <button
                             onClick={() => handleEdit(product)}
                             disabled={isLoading}
-                            className="flex-1 rounded-lg bg-blue-50 text-blue-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-blue-100 disabled:opacity-50 hover:scale-105 active:scale-95"
+                            className="flex-1 rounded-md bg-blue-50 text-blue-600 px-2 py-1 text-xs font-semibold transition-all duration-300 hover:bg-blue-100 disabled:opacity-50"
                           >
                             Modifica
                           </button>
                           <button
                             onClick={() => handleDelete(product.id)}
                             disabled={isLoading}
-                            className="flex-1 rounded-lg bg-red-50 text-red-600 px-3 py-2 text-sm font-semibold transition-all duration-300 hover:bg-red-100 disabled:opacity-50 hover:scale-105 active:scale-95"
+                            className="flex-1 rounded-md bg-red-50 text-red-600 px-2 py-1 text-xs font-semibold transition-all duration-300 hover:bg-red-100 disabled:opacity-50"
                           >
                             Elimina
                           </button>
@@ -751,13 +751,13 @@ export function AdminDashboard() {
                         <button
                           onClick={() => void toggleFeaturedMutation.mutateAsync({ id: product.id })}
                           disabled={toggleFeaturedMutation.isPending}
-                          className={`w-full rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 active:scale-95 ${
+                          className={`w-full rounded-md px-2 py-1 text-xs font-semibold transition-all duration-300 ${
                             (product as any).featured
                               ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                           } disabled:opacity-50`}
                         >
-                          {(product as any).featured ? "Rimuovi da Evidenza" : "Aggiungi ad Evidenza"}
+                          {(product as any).featured ? "Rimuovi" : "Evidenza"}
                         </button>
                       </div>
                     </div>

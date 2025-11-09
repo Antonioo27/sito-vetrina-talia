@@ -3,10 +3,16 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
+import { api } from "~/trpc/react";
 
 export function Navbar() {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Get wishlist count (ottimizzato: usa getCount invece di getAll)
+  const { data: wishlistCount = 0 } = api.wishlist.getCount.useQuery(undefined, {
+    enabled: !!session?.user && !(session?.user as any)?.isAdmin,
+  });
 
   const isLoading = status === "loading";
   const isAuthenticated = !!session?.user;
@@ -55,11 +61,11 @@ export function Navbar() {
                   Contatti
                 </Link>
                 <Link
-                  href="/prodotti"
+                  href="/catalogo"
                   className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
                 >
                   <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-                  Prodotti
+                  Catalogo
                 </Link>
               </div>
 
@@ -82,9 +88,16 @@ export function Navbar() {
                     title="La mia Wishlist"
                   >
                     <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
+                    <div className="relative">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      {wishlistCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          {wishlistCount > 9 ? "9+" : wishlistCount}
+                        </span>
+                      )}
+                    </div>
                   </Link>
                 )}
 
@@ -160,11 +173,11 @@ export function Navbar() {
                   Contatti
                 </Link>
                 <Link
-                  href="/prodotti"
+                  href="/catalogo"
                   className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Prodotti
+                  Catalogo
                 </Link>
               </>
             ) : null}
@@ -180,12 +193,19 @@ export function Navbar() {
                   {!session?.user?.isAdmin && (
                     <Link
                       href="/wishlist"
-                      className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2"
+                      className="px-4 py-3 rounded-lg text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300 flex items-center gap-2 relative"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
+                      <div className="relative">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        {wishlistCount > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                            {wishlistCount > 9 ? "9+" : wishlistCount}
+                          </span>
+                        )}
+                      </div>
                       La mia Wishlist
                     </Link>
                   )}

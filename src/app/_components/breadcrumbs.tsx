@@ -34,10 +34,10 @@ export function Breadcrumbs() {
       return [{ label: "Home" }];
     }
 
-    if (pathname === "/prodotti") {
+    if (pathname === "/catalogo") {
       return [
         { label: "Home", href: "/" },
-        { label: "Prodotti" },
+        { label: "Catalogo" },
       ];
     }
 
@@ -65,7 +65,7 @@ export function Breadcrumbs() {
     if (isProductPage && productId) {
       return [
         { label: "Home", href: "/" },
-        { label: "Prodotti", href: "/prodotti" },
+        { label: "Catalogo", href: "/catalogo" },
         { label: productName || "Caricamento..." },
       ];
     }
