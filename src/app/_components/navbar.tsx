@@ -80,6 +80,18 @@ export function Navbar() {
               <div className="text-sm font-medium text-gray-700">Caricamento...</div>
             ) : isAuthenticated ? (
               <>
+                {/* Admin Dashboard Link - Shown only for Admin */}
+                {session?.user?.isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="relative inline-block px-4 py-2 font-medium text-white bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 group"
+                    title="Admin Dashboard"
+                  >
+                    <span className="absolute inset-0 bg-yellow-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                    Admin
+                  </Link>
+                )}
+
                 {/* Wishlist Link - Hidden for Admin */}
                 {!session?.user?.isAdmin && (
                   <Link
@@ -189,6 +201,17 @@ export function Navbar() {
                 </div>
               ) : isAuthenticated ? (
                 <>
+                  {/* Admin Dashboard Link - Shown only for Admin */}
+                  {session?.user?.isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="px-4 py-3 rounded-lg text-white bg-gradient-to-r from-yellow-500 to-yellow-600 font-medium hover:shadow-md transition-colors duration-300"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+
                   {/* Wishlist Link - Hidden for Admin */}
                   {!session?.user?.isAdmin && (
                     <Link
