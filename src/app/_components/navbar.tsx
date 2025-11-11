@@ -42,8 +42,8 @@ export function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex md:items-center md:gap-8">
-          {/* Main Navigation Links - Hidden for Admin */}
-          {!isAuthenticated || !session?.user?.isAdmin ? (
+          {/* Main Navigation Links - Shown for non-admin users only */}
+          {!session?.user?.isAdmin ? (
             <>
               <div className="flex items-center gap-6">
                 <Link
@@ -167,8 +167,8 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="border-t border-gray-200 bg-white animate-in slide-in-from-top-2 duration-300 md:hidden">
           <div className="flex flex-col gap-2 px-4 py-4">
-            {/* Navigation Links - Hidden for Admin */}
-            {!isAuthenticated || !session?.user?.isAdmin ? (
+            {/* Navigation Links - Shown for non-admin users only */}
+            {!session?.user?.isAdmin ? (
               <>
                 <Link
                   href="/"
