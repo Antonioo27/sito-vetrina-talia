@@ -4,10 +4,10 @@ import { useState, useRef } from "react";
 import type { Product } from "@prisma/client";
 
 import { api } from "~/trpc/react";
+import { UploadDropzone } from "~/utils/uploadthing";
 
 export function AdminDashboard() {
   const [newTypology, setNewTypology] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,6 +29,7 @@ export function AdminDashboard() {
   const [bannerAltText, setBannerAltText] = useState("");
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchProduct, setSearchProduct] = useState("");
+  const [uploadingImages, setUploadingImages] = useState(false);
   const fileInputBannerRef = useRef<HTMLInputElement>(null);
 
   const { data: products, refetch } = api.product.getAll.useQuery();
@@ -128,10 +129,7 @@ export function AdminDashboard() {
     });
     setUploadedImages([]);
     setEditingId(null);
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    setUploadingImages(false);
   };
 
   const handleInputChange = (
@@ -142,45 +140,6 @@ export function AdminDashboard() {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const newImages: Array<{ url: string; alt?: string }> = [];
-    let loadedCount = 0;
-
-    Array.from(files).forEach((file) => {
-      // Check file size (max 2MB per file)
-      if (file.size > 2 * 1024 * 1024) {
-        alert(`Il file ${file.name} è troppo grande. Massimo 2MB.`);
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        newImages.push({ url: base64, alt: file.name });
-        loadedCount++;
-
-        // Quando tutti i file sono stati caricati, aggiorna lo state una sola volta
-        if (loadedCount === Array.from(files).length) {
-          setUploadedImages((prev) => [...prev, ...newImages]);
-          // Set the first image as main imageUrl if we don't have one
-          if (uploadedImages.length === 0 && newImages.length > 0) {
-            const firstImage = newImages[0];
-            if (firstImage) {
-              setFormData((prev) => ({
-                ...prev,
-                imageUrl: firstImage.url,
-              }));
-            }
-          }
-        }
-      };
-      reader.readAsDataURL(file);
-    });
   };
 
   const removeImage = (index: number) => {
@@ -559,26 +518,50 @@ export function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Image Upload - Multiple */}
+              {/* Image Upload - Multiple with UploadThing */}
               <div>
                 <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">
                   Carica Immagini (puoi aggiungere più di una)
                 </label>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageChange}
-                      disabled={isLoading}
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#866f59] file:text-white hover:file:bg-[#7a5d47]"
+
+                {uploadedImages.length === 0 ? (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                    <UploadDropzone
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res && res.length > 0) {
+                          const newImages = res.map((r, index) => ({
+                            url: r.url,
+                            alt: `Image ${index + 1}`,
+                          }));
+                          setUploadedImages((prev) => [...prev, ...newImages]);
+
+                          // Set first image as main if we don't have one
+                          if (!formData.imageUrl && newImages.length > 0) {
+                            const firstImage = newImages[0];
+                            if (firstImage) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                imageUrl: firstImage.url,
+                              }));
+                            }
+                          }
+                          setUploadingImages(false);
+                        }
+                      }}
+                      onUploadError={(error: Error) => {
+                        console.error("Upload error:", error);
+                        alert(`Errore di upload: ${error.message}`);
+                        setUploadingImages(false);
+                      }}
+                      onUploadBegin={() => {
+                        setUploadingImages(true);
+                      }}
                     />
                   </div>
-                </div>
-                {uploadedImages.length > 0 && (
-                  <div className="mt-4">
+                ) : (
+                  <div className="space-y-4">
+                    {/* Display already uploaded images */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {uploadedImages.map((image, index) => (
                         <div key={index} className="relative group">
@@ -607,7 +590,36 @@ export function AdminDashboard() {
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-500 mt-3">
+
+                    {/* Option to add more images */}
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                      <p className="text-sm text-gray-600 mb-3 text-center font-medium">
+                        Aggiungi altre immagini
+                      </p>
+                      <UploadDropzone
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => {
+                          if (res && res.length > 0) {
+                            const newImages = res.map((r, index) => ({
+                              url: r.url,
+                              alt: `Image ${uploadedImages.length + index + 1}`,
+                            }));
+                            setUploadedImages((prev) => [...prev, ...newImages]);
+                            setUploadingImages(false);
+                          }
+                        }}
+                        onUploadError={(error: Error) => {
+                          console.error("Upload error:", error);
+                          alert(`Errore di upload: ${error.message}`);
+                          setUploadingImages(false);
+                        }}
+                        onUploadBegin={() => {
+                          setUploadingImages(true);
+                        }}
+                      />
+                    </div>
+
+                    <p className="text-xs text-gray-500">
                       {uploadedImages.length} immagine{uploadedImages.length !== 1 ? 'i' : ''} caricate
                     </p>
                   </div>
@@ -618,10 +630,10 @@ export function AdminDashboard() {
               <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || uploadingImages}
                   className="flex-1 rounded-lg bg-gradient-to-r from-[#866f59] to-[#9d8273] hover:from-[#7a5d47] hover:to-[#8a6b58] text-white font-bold py-2.5 text-sm transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? "..." : editingId ? "Aggiorna" : "Aggiungi"}
+                  {uploadingImages ? "Caricamento immagini..." : isLoading ? "..." : editingId ? "Aggiorna" : "Aggiungi"}
                 </button>
               </div>
 

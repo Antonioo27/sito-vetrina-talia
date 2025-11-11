@@ -207,3 +207,132 @@ UPLOADTHING_TOKEN=sk_live_YOUR_TOKEN_HERE
 ```
 
 Ottieni il token da: https://uploadthing.com/dashboard
+
+---
+
+## Fase 3: Integrazione nel Form di Creazione Prodotto ✅
+
+### Cosa è stato fatto:
+
+1. **Frontend**: Sostituito il vecchio input file con `<UploadDropzone>` di UploadThing
+   - File: `src/app/_components/admin-dashboard.tsx`
+   - Dual-dropzone UI: uno per l'upload iniziale, uno per aggiungere altre immagini
+   - Anteprima delle immagini caricate con possibilità di eliminazione
+   - Badge "Principale" per la prima immagine
+
+2. **Backend**: Utilizzo della mutazione tRPC existente
+   - File: `src/server/api/routers/product.ts`
+   - Mutazione `create` accetta `mediaUrls: string[]`
+   - Crea il prodotto e i media in una singola transazione Prisma
+
+3. **Flow Completo**:
+   ```
+   User selects images
+   ↓
+   UploadDropzone carica su UploadThing
+   ↓
+   onClientUploadComplete ritorna URLs
+   ↓
+   URLs salvati nello stato React
+   ↓
+   Form submission invia mediaUrls a tRPC
+   ↓
+   Backend crea Product + ProductMedia insieme
+   ↓
+   Success!
+   ```
+
+### Come funziona nel dettaglio:
+
+#### Frontend (admin-dashboard.tsx):
+
+```tsx
+import { UploadDropzone } from "~/utils/uploadthing";
+
+// Nello stato del form:
+const [uploadedImages, setUploadedImages] = useState<Array<{ url: string; alt?: string }>>([]);
+const [uploadingImages, setUploadingImages] = useState(false);
+
+// Nel JSX:
+<UploadDropzone
+  endpoint="imageUploader"
+  onClientUploadComplete={(res) => {
+    if (res && res.length > 0) {
+      const newImages = res.map((r, index) => ({
+        url: r.url,
+        alt: `Image ${index + 1}`,
+      }));
+      setUploadedImages((prev) => [...prev, ...newImages]);
+      setUploadingImages(false);
+    }
+  }}
+  onUploadError={(error: Error) => {
+    console.error("Upload error:", error);
+    alert(`Errore di upload: ${error.message}`);
+    setUploadingImages(false);
+  }}
+  onUploadBegin={() => {
+    setUploadingImages(true);
+  }}
+/>
+
+// Al submit del form:
+const input = {
+  name: formData.name,
+  // ... altri dati
+  mediaUrls: uploadedImages.length > 0 ? uploadedImages.map(img => img.url) : undefined,
+};
+
+await createMutation.mutateAsync(input);
+```
+
+#### Backend (product.ts):
+
+```typescript
+create: protectedProcedure
+  .input(productWithMediaSchema) // Include mediaUrls in schema
+  .mutation(async ({ ctx, input }) => {
+    if (!ctx.session.user.isAdmin) {
+      throw new Error("Non autorizzato");
+    }
+
+    const { mediaUrls, ...productData } = input;
+
+    // Single transaction: create product + media together
+    return ctx.db.product.create({
+      data: {
+        ...productData,
+        media: mediaUrls
+          ? {
+              create: mediaUrls.map((url, index) => ({
+                type: "image",
+                url,
+                order: index,
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        media: {
+          orderBy: { order: "asc" },
+        },
+      },
+    });
+  }),
+```
+
+### Vantaggi:
+
+✅ **Sicurezza**: Immagini caricate su UploadThing (non nel database)
+✅ **Performance**: CDN globale per velocità di download
+✅ **Scalabilità**: Infrastruttura enterprise-grade
+✅ **UX**: Drag-and-drop intuitivo
+✅ **Type-safe**: Full TypeScript support
+✅ **Transaction**: Product + Media creati insieme (no inconsistencies)
+
+### Prossimi step opzionali:
+
+1. **Aggiungere autenticazione al middleware di UploadThing** per permettere solo ad admin di caricare
+2. **Aggiungere validazione** per file size/type più stretti
+3. **Implementare cropping/editing** delle immagini prima dell'upload
+4. **Aggiungere immagini a pagina di dettaglio** per mostrare la galleria
