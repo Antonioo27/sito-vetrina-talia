@@ -23,7 +23,7 @@ export function Navbar() {
         {/* Logo/Brand */}
         <Link
           href="/"
-          className="flex items-center gap-4 transition-transform hover:scale-105"
+          className="flex items-center gap-4 transition-transform hover:scale-105 flex-shrink-0"
         >
           <img
             src="/images/logo.png"
@@ -40,8 +40,8 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="flex-1 flex items-center justify-center md:justify-start gap-8">
+        {/* Desktop Menu - Aligned to the RIGHT */}
+        <div className="flex items-center gap-8 ml-auto">
           {/* Main Navigation Links - Shown for non-admin users only */}
           {!session?.user?.isAdmin ? (
             <>
@@ -68,9 +68,6 @@ export function Navbar() {
                   Catalogo
                 </Link>
               </div>
-
-              {/* Separator */}
-              <div className="w-px h-6 bg-gray-300"></div>
             </>
           ) : null}
 
