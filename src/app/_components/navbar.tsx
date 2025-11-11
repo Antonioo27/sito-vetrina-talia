@@ -18,8 +18,8 @@ export function Navbar() {
   const isAuthenticated = !!session?.user;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-md shadow-sm">
-      <div className="flex items-center justify-between px-4 py-2 max-w-full mx-auto">
+    <nav className="sticky top-0 z-50 border-b border-gray-300 bg-white shadow-lg">
+      <div className="flex items-center justify-between px-4 py-3 max-w-full mx-auto">
         {/* Logo/Brand */}
         <Link
           href="/"
@@ -48,23 +48,23 @@ export function Navbar() {
               <div className="flex items-center gap-6">
                 <Link
                   href="/"
-                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                  className="relative inline-block px-4 py-2 font-bold text-gray-800 transition-all duration-300 group hover:text-gray-900"
                 >
-                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  <span className="absolute inset-0 bg-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
                   Home
                 </Link>
                 <Link
                   href="/contatti"
-                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                  className="relative inline-block px-4 py-2 font-bold text-gray-800 transition-all duration-300 group hover:text-gray-900"
                 >
-                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  <span className="absolute inset-0 bg-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
                   Contatti
                 </Link>
                 <Link
                   href="/catalogo"
-                  className="relative inline-block px-4 py-2 font-medium text-gray-900 transition-all duration-300 group"
+                  className="relative inline-block px-4 py-2 font-bold text-gray-800 transition-all duration-300 group hover:text-gray-900"
                 >
-                  <span className="absolute inset-0 bg-gray-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+                  <span className="absolute inset-0 bg-gray-200 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
                   Catalogo
                 </Link>
               </div>
@@ -125,13 +125,13 @@ export function Navbar() {
               <>
                 <Link
                   href="/register"
-                  className="px-4 py-2 font-medium text-gray-900 border-2 border-gray-900 rounded-lg transition-all duration-300 hover:bg-gray-100"
+                  className="px-4 py-2 font-bold text-gray-900 border-2 border-gray-900 rounded-lg transition-all duration-300 hover:bg-gray-900 hover:text-white"
                 >
                   Registrati
                 </Link>
                 <Link
                   href="/login"
-                  className="px-4 py-2 font-medium text-white bg-gradient-to-r from-[#866f59] to-[#9d8273] rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
+                  className="px-4 py-2 font-bold text-white bg-gradient-to-r from-[#866f59] to-[#9d8273] rounded-lg transition-all duration-300 hover:shadow-xl hover:scale-110"
                 >
                   Accedi
                 </Link>
@@ -143,20 +143,21 @@ export function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden text-gray-900 transition-transform duration-300"
+          className="md:hidden p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-300"
+          title="Menu"
         >
           <svg
-            className={`h-6 w-6 transition-transform duration-300 ${
+            className={`h-7 w-7 transition-transform duration-300 ${
               isMenuOpen ? "rotate-90" : ""
             }`}
             fill="none"
             stroke="currentColor"
+            strokeWidth={2}
             viewBox="0 0 24 24"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
