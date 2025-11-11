@@ -41,7 +41,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex md:items-center md:gap-8">
+        <div className="flex-1 flex items-center justify-center md:justify-start gap-8">
           {/* Main Navigation Links - Shown for non-admin users only */}
           {!session?.user?.isAdmin ? (
             <>
@@ -140,10 +140,10 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button - Hidden on larger screens */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-300"
+          className="p-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-300 lg:hidden ml-auto"
           title="Menu"
         >
           <svg
@@ -166,7 +166,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="border-t border-gray-200 bg-white animate-in slide-in-from-top-2 duration-300 md:hidden">
+        <div className="border-t border-gray-200 bg-white animate-in slide-in-from-top-2 duration-300 lg:hidden">
           <div className="flex flex-col gap-2 px-4 py-4">
             {/* Navigation Links - Shown for non-admin users only */}
             {!session?.user?.isAdmin ? (
