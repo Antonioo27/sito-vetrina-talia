@@ -2,6 +2,7 @@ import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import { api, HydrateClient } from "~/trpc/server";
 import { AdminDashboard } from "~/app/_components/admin-dashboard";
+import { AdminLogoutButton } from "~/app/_components/admin-logout-button";
 
 export default async function AdminPage() {
   const session = await auth();
@@ -32,8 +33,9 @@ export default async function AdminPage() {
         </div>
 
         <div className="container flex flex-col gap-8 px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center animate-in fade-in slide-in-from-top-4 duration-700">
-            <div className="px-6 py-3 bg-gradient-to-r from-gray-900/10 to-yellow-600/10 rounded-lg border border-gray-200 ml-auto">
+          <div className="flex flex-col sm:flex-row items-start gap-4 justify-between animate-in fade-in slide-in-from-top-4 duration-700">
+            <AdminLogoutButton />
+            <div className="px-6 py-3 bg-gradient-to-r from-gray-900/10 to-yellow-600/10 rounded-lg border border-gray-200">
               <p className="text-sm font-medium text-gray-700">
                 Benvenuto <span className="font-bold text-gray-900">{session.user.firstName || session.user.email}</span>
               </p>

@@ -2,6 +2,7 @@
 
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ProductCard } from "./product-card";
 
 export function ProductList() {
@@ -42,17 +43,27 @@ export function ProductList() {
           <p className="text-gray-400 mt-2">I prodotti verranno aggiunti presto</p>
         </div>
       ) : (
-        <div className="w-full overflow-x-auto pb-4">
-          <div className="flex gap-6 justify-center px-4 min-w-min">
-            {products.map((product, index) => (
-              <div
-                key={product.id}
-                className="flex-shrink-0 w-72 animate-in fade-in slide-in-from-bottom-8"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
+        <div className="w-full">
+          <div className="w-full overflow-x-auto pb-4">
+            <div className="flex gap-6 justify-center px-4 min-w-min">
+              {products.map((product, index) => (
+                <div
+                  key={product.id}
+                  className="flex-shrink-0 w-72 animate-in fade-in slide-in-from-bottom-8"
+                  style={{ animationDelay: `${index * 150}ms` }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center mt-12">
+            <Link
+              href="/catalogo"
+              className="px-8 py-3 bg-gradient-to-r from-[#866f59] via-[#9d8273] to-[#866f59] text-white font-bold text-sm transition-all duration-400 hover:shadow-xl hover:shadow-[#866f59]/50 transform hover:scale-105 active:scale-95"
+            >
+              Scopri tutto il catalogo
+            </Link>
           </div>
         </div>
       )}

@@ -30,9 +30,7 @@ export const adminRouter = createTRPCRouter({
         lastName: true,
         isAdmin: true,
         emailVerified: true,
-        createdAt: true,
       },
-      orderBy: { createdAt: "desc" },
     });
 
     return users;

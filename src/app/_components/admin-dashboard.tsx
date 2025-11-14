@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { Product } from "@prisma/client";
 
 import { api } from "~/trpc/react";
-import { UploadDropzone } from "~/utils/uploadthing";
+import { UploadDropzone, UploadButton } from "~/utils/uploadthing";
 
 export function AdminDashboard() {
   const [newTypology, setNewTypology] = useState("");
@@ -14,6 +14,7 @@ export function AdminDashboard() {
     description: "",
     price: "",
     discount: "",
+    discountExpiryDate: "",
     imageUrl: "",
     typology: "",
     weight: "",
@@ -30,9 +31,12 @@ export function AdminDashboard() {
   const [showProductForm, setShowProductForm] = useState(false);
   const [searchProduct, setSearchProduct] = useState("");
   const [uploadingImages, setUploadingImages] = useState(false);
-  const fileInputBannerRef = useRef<HTMLInputElement>(null);
 
   const { data: products, refetch } = api.product.getAll.useQuery();
+  const { data: fullProduct } = api.product.getById.useQuery(
+    { id: editingId ?? "" },
+    { enabled: !!editingId }
+  );
   const { data: typologies = [], refetch: refetchTypologies } = api.typology.getAll.useQuery();
   const { data: banners = [], refetch: refetchBanners } = api.banner.getAll.useQuery();
 
@@ -120,6 +124,7 @@ export function AdminDashboard() {
       description: "",
       price: "",
       discount: "",
+      discountExpiryDate: "",
       imageUrl: "",
       typology: "",
       weight: "",
@@ -181,6 +186,7 @@ export function AdminDashboard() {
       description: formData.description || undefined,
       price: formData.price ? parseFloat(formData.price) : undefined,
       discount: formData.discount ? parseFloat(formData.discount) : undefined,
+      discountExpiryDate: formData.discountExpiryDate ? new Date(formData.discountExpiryDate) : undefined,
       imageUrl: formData.imageUrl || undefined,
       typology: formData.typology || undefined,
       weight: formData.weight ? parseFloat(formData.weight) : undefined,
@@ -201,11 +207,19 @@ export function AdminDashboard() {
   };
 
   const handleEdit = (product: any) => {
+    // Formatta la data per l'input type="date"
+    let formattedDate = "";
+    if (product.discountExpiryDate) {
+      const date = new Date(product.discountExpiryDate);
+      formattedDate = date.toISOString().split('T')[0] || "";
+    }
+
     setFormData({
       name: product.name,
       description: product.description || "",
       price: product.price?.toString() || "",
       discount: (product as any).discount?.toString() || "",
+      discountExpiryDate: formattedDate,
       imageUrl: product.imageUrl || "",
       typology: (product as any).typology || "",
       weight: (product as any).weight?.toString() || "",
@@ -216,6 +230,7 @@ export function AdminDashboard() {
 
     // Mostra le immagini dal database (media) o quella vecchia (imageUrl)
     if (product.media && product.media.length > 0) {
+      console.log(`[EDIT] Caricamento ${product.media.length} immagini dal database`);
       setUploadedImages(
         product.media.map((m: any) => ({
           url: m.url,
@@ -223,8 +238,10 @@ export function AdminDashboard() {
         }))
       );
     } else if (product.imageUrl) {
+      console.log("[EDIT] Caricamento immagine singola (legacy imageUrl)");
       setUploadedImages([{ url: product.imageUrl, alt: product.name }]);
     } else {
+      console.log("[EDIT] Nessuna immagine trovata");
       setUploadedImages([]);
     }
 
@@ -233,6 +250,19 @@ export function AdminDashboard() {
     setShowProductForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Quando il prodotto completo viene caricato (con media), aggiorna le immagini
+  useEffect(() => {
+    if (fullProduct && fullProduct.media && fullProduct.media.length > 0) {
+      console.log(`[EFFECT] Aggiornamento immagini da fullProduct: ${fullProduct.media.length} trovate`);
+      setUploadedImages(
+        fullProduct.media.map((m: any) => ({
+          url: m.url,
+          alt: m.alt || fullProduct.name
+        }))
+      );
+    }
+  }, [fullProduct]);
 
   const handleDelete = (id: string) => {
     if (window.confirm("Sei sicuro di voler eliminare questo prodotto?")) {
@@ -382,8 +412,8 @@ export function AdminDashboard() {
                 />
               </div>
 
-              {/* Grid: Price, Discount, Typology */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Grid: Price, Discount, Discount Expiry, Typology */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="price" className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">
                     Prezzo (€)
@@ -417,6 +447,21 @@ export function AdminDashboard() {
                     step="0.01"
                     min="0"
                     max="100"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="discountExpiryDate" className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">
+                    Scadenza Sconto
+                  </label>
+                  <input
+                    type="date"
+                    id="discountExpiryDate"
+                    name="discountExpiryDate"
+                    value={formData.discountExpiryDate}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
                     className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                   />
                 </div>
@@ -853,22 +898,21 @@ export function AdminDashboard() {
                 <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">
                   Immagine Banner
                 </label>
-                <input
-                  ref={fileInputBannerRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setBannerImageUrl(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#866f59] file:text-white hover:file:bg-[#7a5d47]"
-                />
+                <div className="rounded-lg border border-gray-300 bg-gray-50 p-4">
+                  <UploadButton
+                    endpoint="bannerUploader"
+                    onClientUploadComplete={(res) => {
+                      if (res && res[0]) {
+                        setBannerImageUrl(res[0].url);
+                        console.log("Banner upload completed:", res[0].url);
+                      }
+                    }}
+                    onUploadError={(error: Error) => {
+                      alert(`Upload error: ${error.message}`);
+                    }}
+                    className="ut-button:w-full ut-button:bg-[#866f59] ut-button:text-white ut-button:font-bold ut-button:py-2.5 ut-button:rounded-lg ut-button:hover:bg-[#7a5d47] ut-button:transition-colors"
+                  />
+                </div>
               </div>
 
               <div>

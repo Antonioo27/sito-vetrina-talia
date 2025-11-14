@@ -56,8 +56,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="it" className={`${geist.variable} scroll-smooth`}>
-      <body className="bg-white text-gray-900 flex flex-col min-h-screen">
+    <html lang="it" className={`${geist.variable} scroll-smooth overflow-x-hidden`}>
+      <body className="bg-white text-gray-900 flex flex-col min-h-screen overflow-x-hidden">
         <Providers>
           <Navbar />
           <Breadcrumbs />

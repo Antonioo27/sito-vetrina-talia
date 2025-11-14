@@ -13,21 +13,17 @@ import { verifyPassword } from "./password";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      email: string;
+    user: DefaultSession["user"] & {
       firstName?: string;
       lastName?: string;
       isAdmin: boolean;
-    } & DefaultSession["user"];
+    };
   }
 
   interface User {
-    id: string;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    isAdmin: boolean;
+    firstName?: string | null;
+    lastName?: string | null;
+    isAdmin?: boolean;
   }
 }
 
@@ -51,15 +47,18 @@ export const authConfig = {
           return null;
         }
 
-        console.log(`[AUTH] Login attempt for: ${credentials.email}`);
+        const email = credentials.email as string;
+        const password = credentials.password as string;
+
+        console.log(`[AUTH] Login attempt for: ${email}`);
 
         // Find user
         const user = await db.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
         if (!user) {
-          console.log(`[AUTH] ❌ User not found: ${credentials.email}`);
+          console.log(`[AUTH] ❌ User not found: ${email}`);
           return null;
         }
 
@@ -67,22 +66,22 @@ export const authConfig = {
 
         // Check password hash exists
         if (!user.password) {
-          console.log(`[AUTH] ❌ User has no password hash: ${credentials.email}`);
+          console.log(`[AUTH] ❌ User has no password hash: ${email}`);
           return null;
         }
 
         // Verify password
         const isPasswordValid = verifyPassword(
-          credentials.password,
+          password,
           user.password
         );
 
         if (!isPasswordValid) {
-          console.log(`[AUTH] ❌ Password mismatch for: ${credentials.email}`);
+          console.log(`[AUTH] ❌ Password mismatch for: ${email}`);
           return null;
         }
 
-        console.log(`[AUTH] ✅ Authentication successful for: ${credentials.email}`);
+        console.log(`[AUTH] ✅ Authentication successful for: ${email}`);
 
         return {
           id: user.id,

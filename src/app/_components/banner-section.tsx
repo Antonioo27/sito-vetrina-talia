@@ -5,32 +5,29 @@ import { api } from "~/trpc/react";
 export function BannerSection() {
   const { data: banner } = api.banner.getActive.useQuery();
 
-  const bannerImage = banner?.imageUrl || "/images/banner.jpg";
-  const bannerAlt = banner?.altText || "Talia Materassi - Materassi Premium";
+  // If no banner is active, don't render anything
+  if (!banner) {
+    return null;
+  }
 
   return (
-    <section className="relative w-full h-56 sm:h-80 md:h-screen flex items-end justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 w-full h-full">
+    <section className="relative w-screen overflow-hidden">
+      {/* Background Image - Aspect ratio 820:461 = 1.78:1 */}
+      <div className="relative w-full" style={{ aspectRatio: "820/461" }}>
         <img
-          src={bannerImage}
-          alt={bannerAlt}
+          src={banner.imageUrl}
+          alt={banner.altText || "Banner"}
           className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          style={{
+            imageRendering: "crisp-edges",
+            WebkitFontSmoothing: "antialiased",
+          }}
         />
-        {/* Smart Overlay - Gradient + Blur for text area */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
-      </div>
-
-      {/* Banner Text - Bottom Center */}
-      <div className="relative z-10 container mx-auto px-4 pb-6 sm:pb-12 md:pb-16 text-center">
-        <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <h1 className="text-2xl sm:text-4xl md:text-7xl font-black text-white mb-1 sm:mb-3 leading-tight">
-            Talia Materassi
-          </h1>
-          <p className="text-sm sm:text-base md:text-xl text-gray-100">
-            Scopri il comfort del lusso
-          </p>
-        </div>
+        {/* Shadow Gradient from Left - Sfumato ombra da sinistra */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
       </div>
 
       {/* Scroll Indicator - Hidden on mobile */}

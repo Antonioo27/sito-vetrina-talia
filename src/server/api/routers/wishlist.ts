@@ -9,7 +9,7 @@ export const wishlistRouter = createTRPCRouter({
   // Get all wishlist items for the current user (con media per la pagina wishlist)
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.wishlist.findMany({
-      where: { userId: ctx.session.user.id },
+      where: { userId: ctx.session.user.id! },
       include: {
         product: {
           include: {
@@ -26,7 +26,7 @@ export const wishlistRouter = createTRPCRouter({
   // Ottimizzato: Query solo per conteggio wishlist (usato nella navbar)
   getCount: protectedProcedure.query(async ({ ctx }) => {
     const count = await ctx.db.wishlist.count({
-      where: { userId: ctx.session.user.id },
+      where: { userId: ctx.session.user.id! },
     });
     return count;
   }),
@@ -38,7 +38,7 @@ export const wishlistRouter = createTRPCRouter({
       const item = await ctx.db.wishlist.findUnique({
         where: {
           userId_productId: {
-            userId: ctx.session.user.id,
+            userId: ctx.session.user.id!,
             productId: input.productId,
           },
         },
@@ -53,7 +53,7 @@ export const wishlistRouter = createTRPCRouter({
       try {
         return await ctx.db.wishlist.create({
           data: {
-            userId: ctx.session.user.id,
+            userId: ctx.session.user.id!,
             productId: input.productId,
           },
           include: {
@@ -71,7 +71,7 @@ export const wishlistRouter = createTRPCRouter({
         return await ctx.db.wishlist.findUnique({
           where: {
             userId_productId: {
-              userId: ctx.session.user.id,
+              userId: ctx.session.user.id!,
               productId: input.productId,
             },
           },
@@ -95,7 +95,7 @@ export const wishlistRouter = createTRPCRouter({
       return await ctx.db.wishlist.delete({
         where: {
           userId_productId: {
-            userId: ctx.session.user.id,
+            userId: ctx.session.user.id!,
             productId: input.productId,
           },
         },

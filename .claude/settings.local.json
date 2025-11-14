@@ -24,7 +24,17 @@
       "Bash(nul)",
       "Bash(powershell -Command:*)",
       "Bash(dir \"C:\\Users\\HP\\Documents\\sito-vetrina-talia\\src\\app\\prodotti\")",
-      "Bash(move prodotti catalogo)"
+      "Bash(move prodotti catalogo)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 60 npx tsc:*)",
+      "Bash(timeout 120 npm run build:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(timeout 120 npx tsc:*)",
+      "Bash(git rm:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

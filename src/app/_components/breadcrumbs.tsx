@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { api } from "~/trpc/react";
 
@@ -12,9 +13,18 @@ interface BreadcrumbItem {
 
 export function Breadcrumbs() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   const [productName, setProductName] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const isProductPage = pathname.startsWith("/prodotto/");
   const productId = isProductPage ? pathname.split("/").pop() : null;
+  const isAdminPage = pathname === "/admin";
+
+  useEffect(() => {
+    if (status !== "loading") {
+      setMounted(true);
+    }
+  }, [status]);
 
   // Use TRPC to fetch product name
   const { data: product } = api.product.getById.useQuery(
@@ -74,9 +84,10 @@ export function Breadcrumbs() {
   };
 
   const breadcrumbs = getBreadcrumbs();
+  const isAdmin = session?.user?.isAdmin;
 
-  // Don't show breadcrumbs on home page
-  if (pathname === "/") {
+  // Don't show breadcrumbs on home page or if user is admin
+  if (pathname === "/" || (mounted && isAdmin)) {
     return null;
   }
 

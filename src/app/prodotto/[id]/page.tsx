@@ -12,6 +12,7 @@ export default function ProductDetailPage() {
   const productId = params.id as string;
   const [mounted, setMounted] = useState(false);
   const [localWishlistStatus, setLocalWishlistStatus] = useState(false);
+  const [daysRemaining, setDaysRemaining] = useState<number | null>(null);
   const { data: session } = useSession();
 
   const utils = api.useUtils();
@@ -71,6 +72,21 @@ export default function ProductDetailPage() {
       console.error("Errore nella gestione della wishlist:", error);
     }
   };
+
+  // Calcola i giorni rimanenti per lo sconto
+  useEffect(() => {
+    if (product?.discountExpiryDate) {
+      const expiryDate = new Date(product.discountExpiryDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      expiryDate.setHours(0, 0, 0, 0);
+
+      const timeDiff = expiryDate.getTime() - today.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+      setDaysRemaining(daysDiff > 0 ? daysDiff : null);
+    }
+  }, [product?.discountExpiryDate]);
 
   useEffect(() => {
     setMounted(true);
@@ -163,6 +179,15 @@ export default function ProductDetailPage() {
                         </>
                       )}
                     </div>
+
+                    {/* Discount Expiry Date */}
+                    {product.discountExpiryDate && product.discount && product.discount > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <p className="text-xs text-gray-700 font-medium">
+                          Valido fino al {new Date(product.discountExpiryDate).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -178,31 +203,31 @@ export default function ProductDetailPage() {
 
                 {/* Specifications */}
                 {((product as any).weight || (product as any).height || (product as any).width || (product as any).length) && (
-                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
-                    <h2 className="text-sm font-bold text-gray-900 mb-2">Specifiche</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="mb-4 p-4 bg-gray-50 border border-gray-200">
+                    <h2 className="text-sm font-bold text-gray-900 mb-4">Specifiche</h2>
+                    <div className="flex flex-wrap gap-6">
                       {(product as any).weight && (
-                        <div className="flex items-center gap-3">
-                          <span className="text-gray-600 font-semibold">Peso:</span>
-                          <span className="text-gray-900 font-bold">{(product as any).weight} kg</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-gray-600 font-semibold text-sm">Peso:</span>
+                          <span className="text-gray-900 font-bold text-base">{(product as any).weight} kg</span>
                         </div>
                       )}
                       {(product as any).height && (
-                        <div className="flex items-center gap-3">
-                          <span className="text-gray-600 font-semibold">Altezza:</span>
-                          <span className="text-gray-900 font-bold">{(product as any).height} cm</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-gray-600 font-semibold text-sm">Altezza:</span>
+                          <span className="text-gray-900 font-bold text-base">{(product as any).height} cm</span>
                         </div>
                       )}
                       {(product as any).width && (
-                        <div className="flex items-center gap-3">
-                          <span className="text-gray-600 font-semibold">Larghezza:</span>
-                          <span className="text-gray-900 font-bold">{(product as any).width} cm</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-gray-600 font-semibold text-sm">Larghezza:</span>
+                          <span className="text-gray-900 font-bold text-base">{(product as any).width} cm</span>
                         </div>
                       )}
                       {(product as any).length && (
-                        <div className="flex items-center gap-3">
-                          <span className="text-gray-600 font-semibold">Lunghezza:</span>
-                          <span className="text-gray-900 font-bold">{(product as any).length} cm</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-gray-600 font-semibold text-sm">Lunghezza:</span>
+                          <span className="text-gray-900 font-bold text-base">{(product as any).length} cm</span>
                         </div>
                       )}
                     </div>

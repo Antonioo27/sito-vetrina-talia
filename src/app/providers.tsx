@@ -9,7 +9,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <SessionProvider
       refetchInterval={15 * 60}
       refetchOnWindowFocus={false}
-      refetchIfOffline={false}
+      refetchWhenOffline={false}
     >
       <TRPCReactProvider>
         {children}

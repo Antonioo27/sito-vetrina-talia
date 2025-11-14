@@ -1,6 +1,16 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
+// Verifica che le credenziali siano presenti
+if (!process.env.UPLOADTHING_TOKEN) {
+  console.error("❌ UPLOADTHING_TOKEN non configurato!");
+}
+if (!process.env.UPLOADTHING_APP_ID) {
+  console.error("❌ UPLOADTHING_APP_ID non configurato!");
+}
+
+console.log("✅ UploadThing configurato correttamente");
+
 const f = createUploadthing();
 
 /**
@@ -31,6 +41,22 @@ export const ourFileRouter = {
       console.log("file url", file.url);
 
       // Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+      return { uploadedBy: metadata.uploadedBy, url: file.url };
+    }),
+
+  bannerUploader: f({
+    image: {
+      maxFileSize: "8MB",
+      maxFileCount: 1, // Max 1 banner image per upload
+    },
+  })
+    .middleware(async ({ req }) => {
+      return { uploadedBy: "admin" };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Banner upload complete");
+      console.log("banner url", file.url);
+
       return { uploadedBy: metadata.uploadedBy, url: file.url };
     }),
 } satisfies FileRouter;
