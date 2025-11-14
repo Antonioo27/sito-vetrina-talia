@@ -86,10 +86,10 @@ export default function ProdottiPage() {
 
       {/* Main Content */}
       <section className="py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
+        <div className="mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Sidebar Filters */}
-            <aside className="w-full lg:w-72 lg:flex-shrink-0">
+            <aside className="lg:col-span-1 lg:sticky lg:top-24 h-fit">
               {/* Search Bar */}
               <div className="mb-8">
                 <div className="relative">
@@ -150,18 +150,10 @@ export default function ProdottiPage() {
                 </div>
               </div>
 
-              {/* Results Summary */}
-              <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600">
-                  <span className="font-bold text-gray-900">{filteredProducts?.length || 0}</span> prodotto
-                  {filteredProducts?.length !== 1 ? "i" : ""} trovato
-                  {filteredProducts?.length !== 1 ? "i" : ""}
-                </p>
-              </div>
             </aside>
 
             {/* Products Grid */}
-            <div className="flex-1">
+            <div className="lg:col-span-3">
           {isLoading ? (
             <div className="rounded-3xl border-2 border-dashed border-gray-300 p-16 text-center bg-gray-50 animate-pulse">
               <p className="text-xl text-gray-500 font-medium">⏳ Caricamento prodotti...</p>
@@ -180,7 +172,7 @@ export default function ProdottiPage() {
               </p>
             </div>
           ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredProducts.map((product, index) => (
                   <div
                     key={product.id}
