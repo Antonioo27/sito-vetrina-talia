@@ -9,6 +9,8 @@ export function Navbar() {
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
   const { data: wishlistCount = 0 } = api.wishlist.getCount.useQuery(undefined, {
     enabled: !!session?.user && !(session?.user as any)?.isAdmin,
   });
@@ -21,46 +23,31 @@ export function Navbar() {
     }
   }, [status]);
 
+  // Check if screen is desktop or mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    handleResize(); // Check on mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm w-screen">
       <div className="w-full px-4 py-4 max-w-full">
-        {/* Logo + Hamburger Menu */}
-        <div className="flex items-center justify-between gap-4">
+        {/* Logo and Menu Container */}
+        <div className="flex items-center justify-between w-full">
+          {/* Logo */}
           <Link href="/" className="flex items-center flex-shrink-0">
             <img src="/images/logo.png" alt="Talia Materassi" className="h-14 w-auto" />
           </Link>
 
-          {/* Hamburger Button - visible only on mobile */}
-          {mounted && !session?.user?.isAdmin && (
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex md:hidden flex-col items-center justify-center w-10 h-10 gap-1.5 text-gray-700 hover:text-[#866f59] transition-colors"
-              title="Menu"
-            >
-              <span
-                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
-                  isMenuOpen ? "rotate-45 translate-y-2" : ""
-                }`}
-              ></span>
-              <span
-                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
-                  isMenuOpen ? "opacity-0" : ""
-                }`}
-              ></span>
-              <span
-                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
-                  isMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                }`}
-              ></span>
-            </button>
-          )}
-        </div>
-
-        {/* Desktop Menu - always visible on md and up */}
-        {mounted && !session?.user?.isAdmin && (
-          <div className="hidden md:block">
-            <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4 lg:gap-6 pt-4">
-              {/* Navigation links - shown to non-admin users only */}
+          {/* DESKTOP MENU - show only on desktop (>= 768px) */}
+          {mounted && !session?.user?.isAdmin && isDesktop && (
+            <div className="flex items-center gap-4 lg:gap-6">
+              {/* Navigation links */}
               <Link
                 href="/"
                 className="text-base sm:text-lg md:text-xl text-gray-700 hover:text-[#866f59] font-medium transition-colors"
@@ -83,7 +70,7 @@ export function Navbar() {
               {/* Auth section */}
               {isAuthenticated ? (
                 <>
-                  {/* Wishlist link - shown only for non-admin users */}
+                  {/* Wishlist link */}
                   {!session?.user?.isAdmin && (
                     <Link
                       href="/wishlist"
@@ -99,7 +86,7 @@ export function Navbar() {
                     </Link>
                   )}
 
-                  {/* Logout button - shown only for non-admin users */}
+                  {/* Logout button */}
                   <button
                     onClick={() => void signOut({ redirectTo: "/" })}
                     className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-base sm:text-lg md:text-xl text-white bg-gradient-to-r from-red-500 to-red-600 rounded hover:shadow-lg font-medium transition-all"
@@ -109,7 +96,7 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  {/* Register and Login buttons - shown only when not authenticated */}
+                  {/* Register and Login buttons */}
                   <Link
                     href="/register"
                     className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-base sm:text-lg md:text-xl text-gray-900 border-2 border-gray-900 rounded hover:bg-gray-50 font-medium transition-all"
@@ -125,12 +112,37 @@ export function Navbar() {
                 </>
               )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Mobile Menu - visible only on mobile when isMenuOpen is true */}
-        {mounted && !session?.user?.isAdmin && isMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
+          {/* HAMBURGER BUTTON - show only on mobile (< 768px) */}
+          {mounted && !session?.user?.isAdmin && !isDesktop && (
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex flex-col items-center justify-center w-10 h-10 gap-1.5 text-gray-700 hover:text-[#866f59] transition-colors"
+              title="Menu"
+            >
+              <span
+                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                  isMenuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
+              ></span>
+              <span
+                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                  isMenuOpen ? "opacity-0" : ""
+                }`}
+              ></span>
+              <span
+                className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                  isMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                }`}
+              ></span>
+            </button>
+          )}
+        </div>
+
+        {/* MOBILE MENU - show only on mobile when opened */}
+        {mounted && !session?.user?.isAdmin && !isDesktop && isMenuOpen && (
+          <div className="mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2 duration-300">
             <div className="flex flex-col gap-3">
               {/* Navigation links */}
               <Link
@@ -158,7 +170,7 @@ export function Navbar() {
               {/* Auth section for mobile */}
               {isAuthenticated ? (
                 <>
-                  {/* Wishlist link - shown only for non-admin users */}
+                  {/* Wishlist link */}
                   {!session?.user?.isAdmin && (
                     <Link
                       href="/wishlist"
