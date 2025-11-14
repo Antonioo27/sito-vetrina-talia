@@ -12,6 +12,7 @@ const productInputSchema = z.object({
   description: z.string().optional(),
   price: z.number().min(0).optional(),
   discount: z.number().min(0).max(100).optional(),
+  discountExpiryDate: z.date().optional(),
   imageUrl: z.string().optional(),
   typology: z.string().optional(),
   weight: z.number().min(0).optional(),
@@ -26,21 +27,14 @@ const productWithMediaSchema = productInputSchema.extend({
 });
 
 export const productRouter = createTRPCRouter({
-  // Ottimizzata: carica prodotti senza media per il catalogo
+  // Ottimizzata: carica prodotti con media per il catalogo
   getAll: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.product.findMany({
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        price: true,
-        discount: true,
-        imageUrl: true,
-        typology: true,
-        featured: true,
-        createdAt: true,
-        // NON carichiamo media qui - si caricano nella pagina dettaglio
+      include: {
+        media: {
+          orderBy: { order: "asc" },
+        },
       },
     });
   }),
