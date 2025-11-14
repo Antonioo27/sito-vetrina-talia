@@ -34,7 +34,7 @@ export function Navbar() {
           {mounted && !session?.user?.isAdmin && (
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex flex-col items-center justify-center w-10 h-10 gap-1.5 text-gray-700 hover:text-[#866f59] transition-colors"
+              className="flex md:hidden flex-col items-center justify-center w-10 h-10 gap-1.5 text-gray-700 hover:text-[#866f59] transition-colors"
               title="Menu"
             >
               <span
