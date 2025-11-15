@@ -4,6 +4,7 @@ import { BannerSection } from "~/app/_components/banner-section";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { api, HydrateClient } from "~/trpc/server";
+import Image from "next/image";
 
 export default async function Home() {
   // Check if user is logged in and is admin
@@ -67,17 +68,38 @@ export default async function Home() {
               {/* Features Grid - I Nostri Punti di Forza */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8 max-w-4xl mx-auto">
                 <div className="flex flex-col items-center gap-2 p-3 md:p-6 bg-white border border-gray-200 hover:shadow-lg transition-all duration-300">
-                  <span className="text-3xl md:text-5xl">🚚</span>
+                  <div className="relative w-24 h-24 md:w-32 md:h-32">
+                    <Image
+                      src="/images/consegnaCasa.png"
+                      alt="Consegna a Casa"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                   <span className="font-bold text-gray-900 text-sm md:text-lg">Consegna a Casa</span>
                   <span className="text-xs md:text-sm text-gray-600 text-center">Spedizione gratuita direttamente a casa tua, con imballaggio sicuro e tracciamento</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-3 md:p-6 bg-white border border-gray-200 hover:shadow-lg transition-all duration-300">
-                  <span className="text-3xl md:text-5xl">🛏️</span>
+                  <div className="relative w-24 h-24 md:w-32 md:h-32">
+                    <Image
+                      src="/images/montaggioIncluso.png"
+                      alt="Montaggio Incluso"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                   <span className="font-bold text-gray-900 text-sm md:text-lg">Montaggio Incluso</span>
                   <span className="text-xs md:text-sm text-gray-600 text-center">I nostri esperti montano il materasso e il letto a casa tua senza costi aggiuntivi</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-3 md:p-6 bg-white border border-gray-200 hover:shadow-lg transition-all duration-300">
-                  <span className="text-3xl md:text-5xl">♻️</span>
+                  <div className="relative w-24 h-24 md:w-32 md:h-32">
+                    <Image
+                      src="/images/riciclaggio.png"
+                      alt="Smaltimento Gratuito"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                   <span className="font-bold text-gray-900 text-sm md:text-lg">Smaltimento Gratuito</span>
                   <span className="text-xs md:text-sm text-gray-600 text-center">Rimuoviamo e smaltiremo correttamente il tuo vecchio materasso</span>
                 </div>

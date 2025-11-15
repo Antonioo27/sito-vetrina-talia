@@ -53,69 +53,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Product Links */}
-          <div>
-            <h4 className="text-lg font-bold mb-6 text-[#866f59]">Prodotti</h4>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Memory Foam
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Molle Insacchettate
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Ibridi
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Lattice Naturale
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Ortopedici
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h4 className="text-lg font-bold mb-6 text-[#866f59]">Azienda</h4>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Chi Siamo
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Contattaci
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Showroom
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-[#866f59] transition-colors duration-300">
-                  Carriere
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
 
         {/* Divider */}
@@ -160,30 +97,6 @@ export function Footer() {
             >
               Mappa del Sito
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Trust Badges */}
-      <div className="border-t border-gray-700 bg-gray-900/50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="text-sm">
-              <p className="text-[#866f59] font-bold">🛡️ Sicuro</p>
-              <p className="text-gray-500 text-xs">Pagamenti Protetti</p>
-            </div>
-            <div className="text-sm">
-              <p className="text-[#866f59] font-bold">🚚 Veloce</p>
-              <p className="text-gray-500 text-xs">Spedizione Rapida</p>
-            </div>
-            <div className="text-sm">
-              <p className="text-[#866f59] font-bold">⭐ Qualità</p>
-              <p className="text-gray-500 text-xs">Certificato</p>
-            </div>
-            <div className="text-sm">
-              <p className="text-[#866f59] font-bold">✓ Garantito</p>
-              <p className="text-gray-500 text-xs">10 Anni</p>
-            </div>
           </div>
         </div>
       </div>

@@ -199,10 +199,11 @@ export function ProductGallery({ items = [], productName = "Prodotto" }: Product
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setIsModalOpen(false)}
         >
-          {/* Close button */}
+          {/* Close button - Positioned at bottom to avoid navbar/hamburger menu */}
           <button
             onClick={() => setIsModalOpen(false)}
-            className="absolute top-4 right-4 z-60 bg-white/20 hover:bg-white/30 text-white rounded-full p-3 transition-all duration-300 backdrop-blur-sm"
+            className="fixed bottom-4 left-4 z-[9999] bg-white/20 hover:bg-white/30 text-white rounded-full p-3 transition-all duration-300 backdrop-blur-sm"
+            title="Chiudi (ESC)"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
