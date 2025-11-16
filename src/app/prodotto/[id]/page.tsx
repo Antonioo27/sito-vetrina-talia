@@ -249,7 +249,7 @@ export default function ProductDetailPage() {
                   </button>
 
                   <a
-                    href={`https://wa.me/393203615767?text=Ciao%20Talia%20Materassi%2C%20mi%20interessa%20il%20prodotto%20%22${encodeURIComponent(product.name)}%22%20e%20avrei%20bisogno%20di%20maggiori%20informazioni`}
+                    href={`https://wa.me/393881734335?text=Ciao%20Talia%20Materassi%2C%20mi%20interessa%20il%20prodotto%20%22${encodeURIComponent(product.name)}%22%20e%20avrei%20bisogno%20di%20maggiori%20informazioni`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white font-bold text-sm transition-all duration-300 hover:shadow-lg"
