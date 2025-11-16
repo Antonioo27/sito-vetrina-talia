@@ -8,6 +8,7 @@ import { Footer } from "~/app/_components/footer";
 import { Navbar } from "~/app/_components/navbar";
 import { Providers } from "~/app/providers";
 import { Breadcrumbs } from "~/app/_components/breadcrumbs";
+import WhatsAppButton from "~/app/_components/whatsapp-button";
 
 export const metadata: Metadata = {
   title: "Talia Materassi | Materassi Premium di Qualità",
@@ -65,6 +66,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <WhatsAppButton />
         </Providers>
       </body>
     </html>
