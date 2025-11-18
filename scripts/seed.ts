@@ -79,40 +79,6 @@ async function main() {
     console.log(`   Admin: ${demoUser.isAdmin}`);
     console.log(`   ID: ${demoUser.id}\n`);
 
-    // Create demo products
-    console.log("🛏️  Creating demo products...");
-
-    const products = [
-      {
-        name: "Materasso Comfort Plus",
-        description: "Materasso ergonomico in memory foam con supporto ortopedico",
-        price: 899.99,
-        imageUrl: "https://images.unsplash.com/photo-1631049307038-da0ec36d9ec1?w=500",
-      },
-      {
-        name: "Materasso Premium Night",
-        description: "Materasso lussuoso con strati di lattice naturale e cotone organico",
-        price: 1299.99,
-        imageUrl: "https://images.unsplash.com/photo-1578607318260-cb6a21b1bc8d?w=500",
-      },
-      {
-        name: "Materasso Basic Classic",
-        description: "Materasso affidabile con molle insacchettate e supporto medio",
-        price: 599.99,
-        imageUrl: "https://images.unsplash.com/photo-1629428073390-c5cbbfb6f7e1?w=500",
-      },
-    ];
-
-    for (const product of products) {
-      await db.product.create({
-        data: {
-          id: `product-${Date.now()}-${Math.random()}`,
-          ...product,
-        },
-      });
-    }
-
-    console.log(`✅ Created ${products.length} demo products\n`);
 
     // Create default banner
     console.log("🖼️  Creating default banner...");
